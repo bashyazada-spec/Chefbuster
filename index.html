@@ -1,0 +1,2509 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Open Graph Meta Tags (Social Sharing) -->
+    <meta property="og:title" content="Chef Buster Cuisine | Culinary Artistry">
+    <meta property="og:description"
+        content="Gourmet comfort food crafted with passion in Naga City. Taste the extraordinary.">
+    <meta property="og:image"
+        content="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773313826/293062451_415344233943612_2309683579709414901_n_aoij50.jpg">
+    <meta property="og:url" content="https://bashyazada-spec.github.io/Chef-Buster/">
+    <meta property="og:type" content="website">
+
+    <title>Chef Buster Cuisine | Culinary Artistry</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Inter:wght@300;400;500;600&family=Permanent+Marker&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #09090b;
+            --accent-gold: #ea580c;
+            --neon-blue: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: #e4e4e7;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .accent-font {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Custom Logo Badge CSS */
+        .logo-badge {
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: radial-gradient(circle, rgba(20, 20, 20, 0.9) 0%, rgba(0, 0, 0, 0.9) 100%);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Tab Fade Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tab-animate {
+            animation: fadeIn 0.4s forwards;
+        }
+
+        /* Sweeping Light Animation */
+        @keyframes shine-sweep {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 200% 50%;
+            }
+        }
+
+        .animate-shine {
+            background: linear-gradient(to right, #e4e4e7 20%, #ea580c 40%, #fbbf24 50%, #ea580c 60%, #e4e4e7 80%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shine-sweep 4s linear infinite;
+        }
+
+        /* Custom Float & Glow for Brand New Button */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-4px);
+            }
+        }
+
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Toast Animations */
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        .toast-enter {
+            animation: slideInUp 0.3s ease-out forwards;
+        }
+
+        .toast-exit {
+            animation: slideOutRight 0.3s ease-in forwards;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+
+<body class="antialiased selection:bg-amber-600 selection:text-white overflow-hidden">
+
+    <!-- Sleek Loading Screen (Preloader) -->
+    <div id="preloader"
+        class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center transition-opacity duration-1000">
+        <div
+            class="w-24 h-24 md:w-32 md:h-32 rounded-xl overflow-hidden mb-8 border border-white/10 shadow-[0_0_30px_rgba(234,88,12,0.3)] animate-pulse">
+            <img src="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773313826/293062451_415344233943612_2309683579709414901_n_aoij50.jpg"
+                class="w-full h-full object-cover" alt="Loading">
+        </div>
+        <div class="flex items-center gap-1">
+            <div class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-bounce" style="animation-delay: 0s;"></div>
+            <div class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
+            <div class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-bounce" style="animation-delay: 0.4s;"></div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-300 bg-black/60 backdrop-blur-md border-b border-white/5"
+        id="navbar">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Brand & Auth Controls -->
+            <div class="flex items-center gap-4 md:gap-6">
+                <a href="#" class="flex items-center gap-3 group">
+                    <div
+                        class="w-10 h-10 border border-white/20 flex items-center justify-center font-bold text-xl accent-font tracking-tighter group-hover:border-amber-500 transition-colors rounded overflow-hidden">
+                        <img src="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773313826/293062451_415344233943612_2309683579709414901_n_aoij50.jpg"
+                            alt="Chef Buster Logo" class="w-full h-full object-cover">
+                    </div>
+                </a>
+
+                <!-- This div is populated dynamically by updateSessionUI() -->
+                <div id="auth-controls"
+                    class="flex flex-col md:flex-row md:items-center gap-1 md:gap-3 border-l border-white/10 pl-4 md:pl-6">
+                    <button onclick="openAuthModal('login')"
+                        class="text-[10px] text-zinc-500 hover:text-amber-500 transition-colors uppercase tracking-widest font-medium text-left">Login</button>
+                    <span class="hidden md:inline text-zinc-800 text-[10px]">•</span>
+                    <button onclick="openAuthModal('register')"
+                        class="text-[10px] text-zinc-500 hover:text-amber-500 transition-colors uppercase tracking-widest font-medium text-left">Register</button>
+                </div>
+            </div>
+
+            <!-- Desktop Menu -->
+            <div
+                class="hidden md:flex items-center space-x-6 lg:space-x-8 text-sm tracking-wider font-medium text-zinc-400">
+                <!-- DYNAMIC ADMIN VIEW BUTTON (Hidden by default) -->
+                <a href="admin.html" id="admin-view-btn"
+                    class="hidden bg-amber-500/10 text-amber-500 border border-amber-500/30 px-3 py-1 rounded text-[11px] font-bold uppercase tracking-widest hover:bg-amber-500 hover:text-black transition-all">Admin
+                    View</a>
+
+                <a href="#new-item"
+                    class="bg-amber-500 text-black text-[11px] font-bold px-3 py-1 rounded shadow-[0_0_10px_rgba(245,158,11,0.5)] uppercase tracking-wider hover:bg-amber-400 transition-colors animate-pulse">New!</a>
+                <a href="#menu" class="hover:text-white transition-colors">Menu</a>
+                <a href="#gallery" class="hover:text-white transition-colors">Gallery</a>
+                <a href="#location" class="hover:text-white transition-colors">Location</a>
+                <a href="#reservation"
+                    class="border border-white/20 px-5 py-2 hover:bg-white hover:text-black transition-all">RESERVATION</a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn"
+                class="md:hidden flex items-center gap-2 border border-white/20 px-3 py-1.5 rounded hover:bg-white/5 transition-colors">
+                <span class="text-xs font-bold uppercase tracking-widest">Menu</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu"
+            class="hidden absolute top-full left-0 w-full bg-black/95 border-b border-white/10 backdrop-blur-xl flex flex-col items-center py-6 space-y-6">
+            <a href="#new-item"
+                class="mobile-link text-lg accent-font bg-amber-500 text-black px-4 py-1 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.5)] uppercase tracking-wider animate-pulse">New!</a>
+            <a href="#menu" class="mobile-link text-lg accent-font">Menu</a>
+            <a href="#gallery" class="mobile-link text-lg accent-font">Gallery</a>
+            <a href="#location" class="mobile-link text-lg accent-font">Location</a>
+            <a href="#reservation" class="mobile-link text-lg accent-font text-amber-500">Reservation</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Background Video -->
+    <header id="hero-section"
+        class="min-h-[100svh] flex flex-col justify-center items-center text-center px-4 relative pt-20 overflow-hidden">
+
+        <!-- Cinematic HTML5 Video Background (Muted by default to allow autoplay) -->
+        <video id="hero-video" autoplay loop muted playsinline
+            class="absolute inset-0 w-full h-full object-cover z-0 transform scale-[1.15] md:scale-[1.1]">
+            <source src="https://res.cloudinary.com/dkogu5r9n/video/upload/v1772081394/ChefbusterEdit_dtmcfa.mp4"
+                type="video/mp4">
+        </video>
+
+        <!-- Day/Night Overlay (Static tint for video readability) -->
+        <div class="absolute inset-0 bg-black/60 z-0"></div>
+
+        <!-- Video Sound Control -->
+        <button onclick="toggleVideoSound()" id="sound-control-btn"
+            class="absolute bottom-24 md:bottom-12 right-6 md:right-12 z-20 flex items-center gap-2 bg-black/60 backdrop-blur-md rounded-full border border-white/10 shadow-xl px-4 py-3 hover:bg-white/10 transition-colors group">
+            <svg id="sound-icon-muted" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="text-zinc-400 group-hover:text-white">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <line x1="23" y1="9" x2="17" y2="15"></line>
+                <line x1="17" y1="9" x2="23" y2="15"></line>
+            </svg>
+            <svg id="sound-icon-unmuted" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="hidden text-amber-500">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+            <span id="sound-text" class="text-xs tracking-widest text-zinc-300 font-medium uppercase">Unmute</span>
+        </button>
+
+        <!-- Digital Clock (Top Right) -->
+        <div
+            class="absolute top-24 md:top-28 right-4 md:right-12 z-20 flex items-center bg-black/50 backdrop-blur-md rounded-full border border-white/10 shadow-xl px-4 py-2">
+            <div class="text-zinc-300 font-mono text-xs md:text-sm tracking-widest flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="text-amber-500">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span id="digital-clock">00:00 --</span>
+            </div>
+        </div>
+
+        <!-- Recreated Logo Badge -->
+        <div
+            class="logo-badge w-48 h-48 md:w-64 md:h-64 rounded-xl flex flex-col justify-center items-center mb-6 md:mb-8 relative z-10 overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)]">
+            <img src="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773313826/293062451_415344233943612_2309683579709414901_n_aoij50.jpg"
+                alt="Chef Buster Logo"
+                class="w-full h-full object-cover hover:scale-105 transition-transform duration-700">
+        </div>
+
+        <h2
+            class="text-xl md:text-3xl tracking-[0.1em] md:tracking-[0.2em] text-zinc-200 font-light z-10 px-4 uppercase [text-shadow:_0_4px_15px_rgba(0,0,0,1)] drop-shadow-xl">
+            Sain ka pa? <span class="text-amber-500 font-medium ml-1 md:ml-2">Chef Buster na!</span>
+        </h2>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-50 z-10">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+        </div>
+    </header>
+
+    <!-- Events Section -->
+    <section id="events"
+        class="py-16 md:py-24 px-6 max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 md:gap-16 items-center">
+        <div>
+            <div class="text-xs tracking-[0.2em] text-zinc-500 mb-4">EXPERIENCES</div>
+            <h2 class="animate-shine text-4xl md:text-6xl mb-6 leading-tight capitalize"
+                style="text-transform: none; font-family: 'Inter', sans-serif; font-weight: 700; letter-spacing: -0.02em;">
+                Taste the extraordinary.
+            </h2>
+            <p class="text-zinc-400 font-light leading-relaxed max-w-md">
+                Join us for exclusive dining events where Chef Buster showcases seasonal ingredients and innovative
+                techniques.
+            </p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-6 w-full">
+            <!-- Sleek Lechon Paksiw Image Card -->
+            <a href="#menu"
+                class="block rounded-2xl shadow-2xl relative overflow-hidden group border border-white/10 hover:border-amber-500/50 transition-all duration-500 h-[300px] md:h-[350px]">
+                <!-- Glow effect behind -->
+                <div
+                    class="absolute -top-20 -right-20 w-64 h-64 bg-amber-500/20 rounded-full blur-3xl group-hover:bg-amber-500/40 transition-all duration-500 z-10 pointer-events-none">
+                </div>
+
+                <img src="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773313825/613699887_1323627796448580_9098446994460843677_n_fdhnvf.jpg"
+                    alt="Chef Buster New Offering"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+
+                <!-- Gradient Overlay for Text Readability -->
+                <div
+                    class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-black/30 flex flex-col justify-between p-5 md:p-6">
+                    <div class="flex justify-between items-start z-10">
+                        <span
+                            class="bg-amber-600/90 backdrop-blur text-white text-[10px] uppercase font-bold px-3 py-1 rounded shadow-lg tracking-wider">Latest
+                            Update</span>
+                    </div>
+                    <div class="flex justify-between items-end z-10">
+                        <div>
+                            <h3
+                                class="text-xl md:text-2xl text-white font-bold drop-shadow-lg mb-2 accent-font group-hover:text-amber-400 transition-colors">
+                                New Offerings!</h3>
+                            <p
+                                class="text-[10px] md:text-xs uppercase tracking-[0.2em] font-bold flex items-center gap-2 text-zinc-300 transition-colors">
+                                Check it out <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="group-hover:translate-x-1 transition-transform">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Neon Event Card -->
+            <div
+                class="bg-[#111113] border border-white/5 p-5 md:p-6 rounded-2xl shadow-2xl relative overflow-hidden group hover:border-white/10 transition-colors h-[300px] md:h-[350px] flex flex-col justify-between">
+                <!-- Glow effect behind -->
+                <div
+                    class="absolute -top-20 -right-20 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl group-hover:bg-amber-500/20 transition-all duration-500">
+                </div>
+
+                <div class="flex justify-between items-start relative z-10">
+                    <div class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Coming Soon<br><span
+                            class="text-zinc-500 font-normal">Date TBA</span></div>
+                    <span
+                        class="bg-white/5 border border-white/10 text-[9px] uppercase px-2 py-1 rounded-full text-zinc-300 tracking-wider">Limited</span>
+                </div>
+
+                <div class="relative z-10 my-auto text-center md:text-left">
+                    <h3 class="neon-text text-2xl md:text-3xl transform -rotate-2">
+                        Coming Soon
+                    </h3>
+                </div>
+
+                <div class="relative z-10">
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span
+                            class="text-[9px] bg-amber-900/30 text-amber-400 px-2 py-1 rounded-full border border-amber-500/20">#TASTINGMENU</span>
+                        <span
+                            class="text-[9px] bg-amber-900/30 text-amber-400 px-2 py-1 rounded-full border border-amber-500/20">#CULINARYART</span>
+                    </div>
+                    <a href="#reservation"
+                        class="text-[10px] uppercase tracking-[0.2em] font-bold flex items-center gap-2 hover:text-amber-400 transition-colors">
+                        View Details <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" class="group-hover:translate-x-1 transition-transform">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Divider -->
+    <div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+
+    <!-- Menu Section -->
+    <section id="menu" class="py-16 md:py-24 px-6 max-w-6xl mx-auto">
+        <div class="text-center mb-10 md:mb-12">
+            <h2 class="text-3xl md:text-5xl mb-3 md:mb-4">Chef's Selection</h2>
+            <p class="text-zinc-500 text-sm md:text-base">Signature dishes crafted from the finest ingredients.</p>
+        </div>
+
+        <!-- Menu Categories (Tabs) -->
+        <div class="flex flex-wrap justify-center gap-3 md:gap-6 mb-12 border-b border-white/5 pb-1">
+            <button class="menu-tab text-amber-500 border-b-2 border-amber-500 pb-2 text-sm tracking-widest uppercase font-bold transition-colors" data-category="all">All</button>
+            <button class="menu-tab text-zinc-500 hover:text-white pb-2 text-sm tracking-widest uppercase font-bold transition-colors border-b-2 border-transparent" data-category="chicken">🍗 Chicken</button>
+            <button class="menu-tab text-zinc-500 hover:text-white pb-2 text-sm tracking-widest uppercase font-bold transition-colors border-b-2 border-transparent" data-category="pork">🥩 Pork</button>
+            <button class="menu-tab text-zinc-500 hover:text-white pb-2 text-sm tracking-widest uppercase font-bold transition-colors border-b-2 border-transparent" data-category="lechon">🐷 Lechon</button>
+            <button class="menu-tab text-zinc-500 hover:text-white pb-2 text-sm tracking-widest uppercase font-bold transition-colors border-b-2 border-transparent" data-category="bulaklak">🍖 Bulaklak</button>
+            <button class="menu-tab text-zinc-500 hover:text-white pb-2 text-sm tracking-widest uppercase font-bold transition-colors border-b-2 border-transparent" data-category="pasta">🍝 Pasta</button>
+            <button class="menu-tab text-zinc-500 hover:text-white pb-2 text-sm tracking-widest uppercase font-bold transition-colors border-b-2 border-transparent" data-category="drinks">🥤 Drinks</button>
+            <button class="menu-tab text-zinc-500 hover:text-white pb-2 text-sm tracking-widest uppercase font-bold transition-colors border-b-2 border-transparent" data-category="sides">🥗 Sides</button>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-x-16 gap-y-12 md:gap-y-10 pt-4" id="menu-grid">
+            <div class="col-span-2 text-center py-10 text-zinc-500 animate-pulse">
+                Loading live menu from kitchen...
+            </div>
+        </div>
+
+        <div class="mt-12 text-center">
+            <a href="#"
+                class="inline-block border border-white/20 px-8 py-3 text-sm tracking-widest hover:bg-white hover:text-black transition-all">VIEW
+                FULL MENU</a>
+        </div>
+    </section>
+
+    <!-- Divider -->
+    <div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="bg-[#050505] py-24">
+        <div class="max-w-7xl mx-auto px-6 mb-12 flex justify-between items-end">
+            <h2 class="text-4xl">The Scene</h2>
+            <a href="https://www.instagram.com/chefbustercuisine/" target="_blank"
+                class="text-xs tracking-widest text-zinc-500 hover:text-white transition-colors">@CHEFBUSTERCUISINE</a>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 px-2 md:px-4 max-w-7xl mx-auto">
+            <div class="aspect-square bg-zinc-900 overflow-hidden relative group rounded-xl">
+                <img src="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773313825/626009973_1344242534387106_5789862204502108083_n_au55sn.jpg"
+                    alt="Chef plating"
+                    class="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
+            </div>
+            <div class="aspect-square bg-zinc-900 overflow-hidden relative group rounded-xl">
+                <img src="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773314779/3_ofeknx.jpg"
+                    alt="Gourmet dish"
+                    class="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
+            </div>
+            <div class="aspect-square bg-zinc-900 overflow-hidden relative group rounded-xl">
+                <img src="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773314779/2_imbnxw.jpg"
+                    alt="Wine"
+                    class="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
+            </div>
+            <div class="aspect-square bg-zinc-900 overflow-hidden relative group rounded-xl">
+                <img src="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773313826/627892852_1346315787513114_163254123382966019_n_ta7c2y.jpg"
+                    alt="Chef Buster dish"
+                    class="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW RESERVATION SLOTS SECTION -->
+    <section id="reservation" class="py-16 md:py-24 px-4 md:px-6 relative">
+        <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[800px] md:h-[800px] bg-amber-900/10 rounded-full blur-[100px] -z-10 pointer-events-none">
+        </div>
+
+        <div
+            class="max-w-5xl mx-auto bg-[#0a0a0c] p-6 md:p-12 border border-white/10 shadow-2xl relative overflow-hidden rounded-2xl">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl md:text-4xl mb-3 accent-font text-white tracking-widest">Available Time Slots</h2>
+                <p class="text-zinc-500 font-light">Select an open slot to book your table. Subject to availability.</p>
+            </div>
+
+            <!-- Slots Grid -->
+            <div id="available-slots-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dynamically populated from JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest Updates Grid (Perfectly Structured to Match) -->
+    <section id="reviews" class="py-20 md:py-32 px-6 bg-[#0a0a0c] relative border-t border-white/5 overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl -z-10"></div>
+        <div class="absolute bottom-0 left-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl -z-10"></div>
+
+        <div class="max-w-6xl mx-auto text-center">
+            <h2 class="text-3xl md:text-4xl mb-3 animate-shine">Latest Updates</h2>
+            <p class="text-zinc-500 font-light mb-10">Follow us on Facebook for our newest creations.</p>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-6 max-w-5xl mx-auto">
+
+                <!-- FB Post 1 (Birthday) -->
+                <div onclick="openFbModal(this)" data-date="October 22, 2025"
+                    data-content="Good morning! Tara, breakfast muna sa Chef Buster.🫶☀️"
+                    data-img="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773340694/597630100_1300393398772020_5422119199206493945_n_qavun6.jpg"
+                    class="cursor-pointer flex flex-col bg-[#242526] rounded-xl overflow-hidden shadow-2xl border border-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-1 text-left group relative">
+                    <!-- Hover Expand -->
+                    <div
+                        class="absolute inset-0 bg-black/0 group-hover:bg-black/40 z-10 transition-colors duration-300 flex items-center justify-center pointer-events-none">
+                        <div
+                            class="bg-black/80 text-white px-5 py-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-2 backdrop-blur-md shadow-2xl font-bold tracking-wider text-sm border border-white/10 transform scale-90 group-hover:scale-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M15 3h6v6"></path>
+                                <path d="M9 21H3v-6"></path>
+                                <path d="M21 3l-7 7"></path>
+                                <path d="M3 21l7-7"></path>
+                            </svg> EXPAND
+                        </div>
+                    </div>
+                    <!-- FB Header -->
+                    <div class="p-4 flex items-center justify-between border-b border-white/5">
+                        <div class="flex items-center gap-3">
+                            <img src="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773313826/293062451_415344233943612_2309683579709414901_n_aoij50.jpg"
+                                alt="Chef Buster"
+                                class="w-10 h-10 rounded-full border border-white/10 object-cover shrink-0">
+                            <div>
+                                <h4
+                                    class="text-sm font-semibold text-[#E4E6EB] flex items-center gap-1 group-hover:underline">
+                                    Chef Buster Cuisine <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                        viewBox="0 0 24 24" fill="#0866FF">
+                                        <path
+                                            d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.4-1.4 2.7 2.7 6.5-6.5 1.4 1.4-7.9 7.9z" />
+                                    </svg>
+                                </h4>
+                                <p class="text-xs text-[#B0B3B8] flex items-center gap-1">October 22, 2025 · <svg
+                                        xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                                        fill="currentColor">
+                                        <path
+                                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+                                    </svg></p>
+                            </div>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="#B0B3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="hover:bg-white/10 rounded-full transition-colors">
+                            <circle cx="12" cy="12" r="1"></circle>
+                            <circle cx="19" cy="12" r="1"></circle>
+                            <circle cx="5" cy="12" r="1"></circle>
+                        </svg>
+                    </div>
+                    <!-- FB Caption -->
+                    <div class="px-4 py-3 text-sm text-[#E4E6EB]">
+                        Good morning! Tara, breakfast muna sa Chef Buster.🫶☀️
+                    </div>
+                    <!-- FB Image -->
+                    <img src="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773340694/597630100_1300393398772020_5422119199206493945_n_qavun6.jpg"
+                        class="w-full h-64 md:h-[280px] object-cover border-y border-white/5" alt="Post">
+                    <!-- FB Reactions Container (Pushed to bottom) -->
+                    <div class="px-4 py-3 flex items-center justify-between text-[#B0B3B8] text-xs mt-auto">
+                        <div class="flex items-center gap-2">
+                            <div class="flex -space-x-1">
+                                <div
+                                    class="w-5 h-5 rounded-full bg-[#0866FF] flex items-center justify-center ring-2 ring-[#242526] z-20">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"
+                                        fill="white">
+                                        <path
+                                            d="M2 10.5h3v8H2zM21.5 10.5h-10c-.7 0-1.1-.3-1.4-.7l-1.9-4.8c-.2-.5 0-1.1.4-1.4l.7-.4c.3-.2.8-.2 1.1.1l3.1 3.2V2.5c0-.8.7-1.5 1.5-1.5s1.5.7 1.5 1.5v6.2l3 1.2c.6.2 1.1.8 1.1 1.4v6.6z" />
+                                    </svg>
+                                </div>
+                                <div
+                                    class="w-5 h-5 rounded-full bg-[#F33E58] flex items-center justify-center ring-2 ring-[#242526] z-10">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"
+                                        fill="white">
+                                        <path
+                                            d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <span>428</span>
+                        </div>
+                        <div class="flex gap-3"><span>32 comments</span></div>
+                    </div>
+                </div>
+
+                <!-- FB Post 2 (VIP Room) -->
+                <div onclick="openFbModal(this)" data-date="November 29, 2025"
+                    data-content="Look what's back!!!<br><br>Our VIP Room is now available for booking. Perfect for your mini get-together this holiday season.<br><br>Wider, cozier, better.<br><br>Hurry and reserve your slot now. Message Chef Buster Cuisine."
+                    data-img="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773313825/590788261_1290802876397739_3836062596065715139_n_rvlboq.jpg"
+                    class="cursor-pointer flex flex-col bg-[#242526] rounded-xl overflow-hidden shadow-2xl border border-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-1 text-left group relative">
+                    <!-- Hover Expand -->
+                    <div
+                        class="absolute inset-0 bg-black/0 group-hover:bg-black/40 z-10 transition-colors duration-300 flex items-center justify-center pointer-events-none">
+                        <div
+                            class="bg-black/80 text-white px-5 py-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-2 backdrop-blur-md shadow-2xl font-bold tracking-wider text-sm border border-white/10 transform scale-90 group-hover:scale-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M15 3h6v6"></path>
+                                <path d="M9 21H3v-6"></path>
+                                <path d="M21 3l-7 7"></path>
+                                <path d="M3 21l7-7"></path>
+                            </svg> EXPAND
+                        </div>
+                    </div>
+                    <!-- FB Header -->
+                    <div class="p-4 flex items-center justify-between border-b border-white/5">
+                        <div class="flex items-center gap-3">
+                            <img src="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773313826/293062451_415344233943612_2309683579709414901_n_aoij50.jpg"
+                                alt="Chef Buster"
+                                class="w-10 h-10 rounded-full border border-white/10 object-cover shrink-0">
+                            <div>
+                                <h4
+                                    class="text-sm font-semibold text-[#E4E6EB] flex items-center gap-1 group-hover:underline">
+                                    Chef Buster Cuisine <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                        viewBox="0 0 24 24" fill="#0866FF">
+                                        <path
+                                            d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.4-1.4 2.7 2.7 6.5-6.5 1.4 1.4-7.9 7.9z" />
+                                    </svg>
+                                </h4>
+                                <p class="text-xs text-[#B0B3B8] flex items-center gap-1">November 29, 2025 · <svg
+                                        xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                                        fill="currentColor">
+                                        <path
+                                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+                                    </svg></p>
+                            </div>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="#B0B3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="hover:bg-white/10 rounded-full transition-colors">
+                            <circle cx="12" cy="12" r="1"></circle>
+                            <circle cx="19" cy="12" r="1"></circle>
+                            <circle cx="5" cy="12" r="1"></circle>
+                        </svg>
+                    </div>
+                    <!-- FB Caption -->
+                    <div class="px-4 py-3 text-sm text-[#E4E6EB] line-clamp-2">
+                        Look what's back!!! Our VIP Room is now available for booking. Perfect for your mini
+                        get-together this holiday season.
+                    </div>
+                    <!-- FB Image -->
+                    <img src="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773313825/590788261_1290802876397739_3836062596065715139_n_rvlboq.jpg"
+                        class="w-full h-64 md:h-[280px] object-cover border-y border-white/5 object-center" alt="Post">
+                    <!-- FB Reactions Container -->
+                    <div class="px-4 py-3 flex items-center justify-between text-[#B0B3B8] text-xs mt-auto">
+                        <div class="flex items-center gap-2">
+                            <div class="flex -space-x-1">
+                                <div
+                                    class="w-5 h-5 rounded-full bg-[#0866FF] flex items-center justify-center ring-2 ring-[#242526] z-20">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"
+                                        fill="white">
+                                        <path
+                                            d="M2 10.5h3v8H2zM21.5 10.5h-10c-.7 0-1.1-.3-1.4-.7l-1.9-4.8c-.2-.5 0-1.1.4-1.4l.7-.4c.3-.2.8-.2 1.1.1l3.1 3.2V2.5c0-.8.7-1.5 1.5-1.5s1.5.7 1.5 1.5v6.2l3 1.2c.6.2 1.1.8 1.1 1.4v6.6z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <span>42</span>
+                        </div>
+                        <div class="flex gap-3"><span>13 shares</span></div>
+                    </div>
+                </div>
+
+                <!-- FB Post 3 (Delivery) -->
+                <div onclick="openFbModal(this)" data-date="April 20, 2024"
+                    data-content="Thank you for visiting at chef buster cuisine 🫶❤️"
+                    data-img="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773313826/590391634_1289212806556746_7131830149041056546_n_aqqbmm.jpg"
+                    class="cursor-pointer flex flex-col bg-[#242526] rounded-xl overflow-hidden shadow-2xl border border-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-1 text-left group relative">
+                    <!-- Hover Expand -->
+                    <div
+                        class="absolute inset-0 bg-black/0 group-hover:bg-black/40 z-10 transition-colors duration-300 flex items-center justify-center pointer-events-none">
+                        <div
+                            class="bg-black/80 text-white px-5 py-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-2 backdrop-blur-md shadow-2xl font-bold tracking-wider text-sm border border-white/10 transform scale-90 group-hover:scale-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M15 3h6v6"></path>
+                                <path d="M9 21H3v-6"></path>
+                                <path d="M21 3l-7 7"></path>
+                                <path d="M3 21l7-7"></path>
+                            </svg> EXPAND
+                        </div>
+                    </div>
+                    <!-- FB Header -->
+                    <div class="p-4 flex items-center justify-between border-b border-white/5">
+                        <div class="flex items-center gap-3">
+                            <img src="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773313826/293062451_415344233943612_2309683579709414901_n_aoij50.jpg"
+                                alt="Chef Buster"
+                                class="w-10 h-10 rounded-full border border-white/10 object-cover shrink-0">
+                            <div>
+                                <h4
+                                    class="text-sm font-semibold text-[#E4E6EB] flex items-center gap-1 group-hover:underline">
+                                    Chef Buster Cuisine <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                        viewBox="0 0 24 24" fill="#0866FF">
+                                        <path
+                                            d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.4-1.4 2.7 2.7 6.5-6.5 1.4 1.4-7.9 7.9z" />
+                                    </svg>
+                                </h4>
+                                <p class="text-xs text-[#B0B3B8] flex items-center gap-1">April 20, 2024 · <svg
+                                        xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                                        fill="currentColor">
+                                        <path
+                                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+                                    </svg></p>
+                            </div>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="#B0B3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="hover:bg-white/10 rounded-full transition-colors">
+                            <circle cx="12" cy="12" r="1"></circle>
+                            <circle cx="19" cy="12" r="1"></circle>
+                            <circle cx="5" cy="12" r="1"></circle>
+                        </svg>
+                    </div>
+                    <!-- FB Caption -->
+                    <div class="px-4 py-3 text-sm text-[#E4E6EB]">
+                        Thank you for visiting at chef buster cuisine 🫶❤️
+                    </div>
+                    <!-- FB Image -->
+                    <img src="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773313826/590391634_1289212806556746_7131830149041056546_n_aqqbmm.jpg"
+                        class="w-full h-64 md:h-[280px] object-cover border-y border-white/5 object-top" alt="Post">
+                    <!-- FB Reactions Container -->
+                    <div class="px-4 py-3 flex items-center justify-between text-[#B0B3B8] text-xs mt-auto">
+                        <div class="flex items-center gap-2">
+                            <div class="flex -space-x-1">
+                                <div
+                                    class="w-5 h-5 rounded-full bg-[#F33E58] flex items-center justify-center ring-2 ring-[#242526] z-10">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"
+                                        fill="white">
+                                        <path
+                                            d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <span>2</span>
+                        </div>
+                        <div class="flex gap-3"><span>2 comments</span></div>
+                    </div>
+                </div>
+
+                <!-- FB Post 4 (Group Photo) -->
+                <div onclick="openFbModal(this)" data-date="February 4, 2026"
+                    data-content="Good times and great food with awesome people! Thanks for dropping by. 🍕🍔"
+                    data-img="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773341201/223_fjxzdk.jpg"
+                    class="cursor-pointer flex flex-col bg-[#242526] rounded-xl overflow-hidden shadow-2xl border border-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-1 text-left group relative">
+                    <!-- Hover Expand -->
+                    <div
+                        class="absolute inset-0 bg-black/0 group-hover:bg-black/40 z-10 transition-colors duration-300 flex items-center justify-center pointer-events-none">
+                        <div
+                            class="bg-black/80 text-white px-5 py-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-2 backdrop-blur-md shadow-2xl font-bold tracking-wider text-sm border border-white/10 transform scale-90 group-hover:scale-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M15 3h6v6"></path>
+                                <path d="M9 21H3v-6"></path>
+                                <path d="M21 3l-7 7"></path>
+                                <path d="M3 21l7-7"></path>
+                            </svg> EXPAND
+                        </div>
+                    </div>
+                    <!-- FB Header -->
+                    <div class="p-4 flex items-center justify-between border-b border-white/5">
+                        <div class="flex items-center gap-3">
+                            <img src="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773313826/293062451_415344233943612_2309683579709414901_n_aoij50.jpg"
+                                alt="Chef Buster"
+                                class="w-10 h-10 rounded-full border border-white/10 object-cover shrink-0">
+                            <div>
+                                <h4
+                                    class="text-sm font-semibold text-[#E4E6EB] flex items-center gap-1 group-hover:underline">
+                                    Chef Buster Cuisine <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                        viewBox="0 0 24 24" fill="#0866FF">
+                                        <path
+                                            d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.4-1.4 2.7 2.7 6.5-6.5 1.4 1.4-7.9 7.9z" />
+                                    </svg>
+                                </h4>
+                                <p class="text-xs text-[#B0B3B8] flex items-center gap-1">February 4, 2026 · <svg
+                                        xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                                        fill="currentColor">
+                                        <path
+                                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+                                    </svg></p>
+                            </div>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="#B0B3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="hover:bg-white/10 rounded-full transition-colors">
+                            <circle cx="12" cy="12" r="1"></circle>
+                            <circle cx="19" cy="12" r="1"></circle>
+                            <circle cx="5" cy="12" r="1"></circle>
+                        </svg>
+                    </div>
+                    <!-- FB Caption -->
+                    <div class="px-4 py-3 text-sm text-[#E4E6EB]">
+                        Good times and great food with awesome people! Thanks for dropping by. 🍕🍔
+                    </div>
+                    <!-- FB Image -->
+                    <img src="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773341201/223_fjxzdk.jpg"
+                        class="w-full h-64 md:h-[280px] object-cover border-y border-white/5 object-center" alt="Post">
+                    <!-- FB Reactions Container -->
+                    <div class="px-4 py-3 flex items-center justify-between text-[#B0B3B8] text-xs mt-auto">
+                        <div class="flex items-center gap-2">
+                            <div class="flex -space-x-1">
+                                <div
+                                    class="w-5 h-5 rounded-full bg-[#F33E58] flex items-center justify-center ring-2 ring-[#242526] z-10">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"
+                                        fill="white">
+                                        <path
+                                            d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <span>5</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION: Day / Night Exterior View -->
+    <section id="exterior-view"
+        class="py-16 md:py-24 px-6 bg-black relative border-t border-white/5 flex flex-col items-center overflow-hidden">
+
+        <!-- Text Header & The Switch -->
+        <div class="text-center mb-8 md:mb-12 relative z-10">
+            <h2 class="text-3xl md:text-5xl mb-3 accent-font tracking-widest text-white">The Atmosphere</h2>
+            <p class="text-zinc-500 font-light mb-8 max-w-xl mx-auto">Experience Chef Buster Cuisine. Toggle the switch
+                to see the restaurant by day, or the glowing lights at night.</p>
+
+            <!-- Day/Night Switch (Moved here from Header) -->
+            <div
+                class="inline-flex items-center bg-zinc-900 backdrop-blur-md rounded-full border border-white/10 shadow-xl p-2.5">
+                <div class="flex items-center gap-4 px-3">
+                    <!-- Sun Icon -->
+                    <svg id="ext-sun-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="text-amber-500 transition-colors duration-300">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+
+                    <!-- Switch -->
+                    <button id="ext-theme-toggle"
+                        class="w-14 h-7 rounded-full bg-zinc-700 relative transition-colors focus:outline-none cursor-pointer border border-white/20">
+                        <div id="ext-toggle-circle"
+                            class="w-6 h-6 bg-white rounded-full absolute top-[1px] left-[1px] transition-transform duration-300 shadow-md">
+                        </div>
+                    </button>
+
+                    <!-- Moon Icon -->
+                    <svg id="ext-moon-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="text-zinc-500 transition-colors duration-300">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Changing Image Container -->
+        <div
+            class="max-w-6xl mx-auto w-full h-[300px] md:h-[600px] rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.8)] relative group bg-zinc-900 z-10">
+            <img id="ext-image"
+                src="https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1000&q=80"
+                class="w-full h-full object-cover transition-opacity duration-700 opacity-100"
+                alt="Restaurant Exterior">
+            <div class="absolute inset-0 bg-black/10 pointer-events-none transition-colors duration-700"
+                id="ext-overlay"></div>
+        </div>
+
+    </section>
+
+    <!-- Location / Map Section -->
+    <section id="location" class="py-16 md:py-24 px-6 bg-[#050505] relative border-t border-white/5">
+        <div class="max-w-7xl mx-auto text-center mb-10">
+            <h2 class="text-3xl md:text-5xl mb-3 accent-font tracking-widest text-white">Find Us</h2>
+            <p class="text-zinc-500 font-light">Chef Buster Cuisine, Naga City, Camarines Sur</p>
+        </div>
+
+        <div
+            class="max-w-6xl mx-auto h-[400px] md:h-[600px] rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative group bg-black">
+            <!-- Google Maps Embed -->
+            <iframe
+                src="https://maps.google.com/maps?q=Chef+Buster+Cuisine,+Naga+City&t=&z=17&ie=UTF8&iwloc=&output=embed"
+                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                class="absolute inset-0 w-full h-full grayscale-[0.8] opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700">
+            </iframe>
+
+            <!-- Inner shadow to blend edges into the dark theme -->
+            <div class="absolute inset-0 z-10 pointer-events-none shadow-[inset_0_0_50px_rgba(0,0,0,0.8)]"></div>
+        </div>
+    </section>
+
+    <!-- Feedback CTA Section -->
+    <section class="py-16 md:py-24 px-6 bg-[#0a0a0c] border-t border-white/5 text-center relative overflow-hidden">
+        <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-amber-600/10 rounded-full blur-[100px] pointer-events-none">
+        </div>
+        <div class="max-w-2xl mx-auto relative z-10">
+            <h2 class="text-3xl md:text-5xl mb-4 accent-font tracking-widest text-white">Share Your Thoughts</h2>
+            <p class="text-zinc-400 font-light mb-10 text-sm md:text-base">We are always looking to improve our dishes
+                and service. Let us know how we did!</p>
+            <button onclick="openFeedbackModal()"
+                class="w-full sm:w-auto bg-amber-600 hover:bg-amber-500 text-white font-bold tracking-widest uppercase py-4 px-12 rounded-full shadow-[0_0_30px_rgba(234,88,12,0.4)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(234,88,12,0.6)]">
+                Give Us a Feedback
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-white/10 pt-20 pb-10">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-12 gap-12 mb-16">
+
+            <div class="md:col-span-4">
+                <div class="w-16 h-16 mb-4 rounded-xl overflow-hidden border border-white/20">
+                    <img src="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773313826/293062451_415344233943612_2309683579709414901_n_aoij50.jpg"
+                        alt="Chef Buster Logo" class="w-full h-full object-cover">
+                </div>
+                <p class="text-zinc-500 text-sm font-light mb-6 max-w-sm">
+                    Gourmet comfort food crafted with passion. Join Chef Buster for an unforgettable culinary experience
+                    right in the heart of the city.
+                </p>
+                <div class="flex space-x-4">
+                    <a href="https://www.facebook.com/chefbustercuisine/" target="_blank"
+                        class="w-10 h-10 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-colors rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                    </a>
+                    <a href="https://www.instagram.com/chefbustercuisine/" target="_blank"
+                        class="w-10 h-10 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-colors rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="md:col-span-2 md:col-start-7">
+                <h4 class="text-white mb-6">Explore</h4>
+                <ul class="space-y-4 text-sm text-zinc-500">
+                    <li><a href="#events" class="hover:text-amber-500 transition-colors">Events & Promos</a></li>
+                    <li><a href="#menu" class="hover:text-amber-500 transition-colors">Food Menu</a></li>
+                    <li><a href="#gallery" class="hover:text-amber-500 transition-colors">Gallery</a></li>
+                </ul>
+            </div>
+
+            <div class="md:col-span-4">
+                <h4 class="text-white mb-6">Visit Us</h4>
+                <ul class="space-y-4 text-sm text-zinc-500 font-light">
+                    <li class="flex items-start gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="text-amber-500 mt-0.5 shrink-0">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <a href="https://maps.app.goo.gl/XEqMCiq98SHnRpfG6" target="_blank"
+                            class="hover:text-amber-500 transition-colors">
+                            Chef Buster Cuisine<br>Naga City, Camarines Sur
+                        </a>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="text-amber-500 shrink-0">
+                            <path
+                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                            </path>
+                        </svg>
+                        +63 912 345 6789
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Facebook Post Popup Modal -->
+    <div id="fb-modal"
+        class="fixed inset-0 z-[200] bg-black/90 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 p-4">
+        <div class="bg-[#242526] w-full max-w-3xl rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden border border-white/10 flex flex-col max-h-[95vh] transform scale-95 transition-transform duration-300"
+            id="fb-modal-content">
+
+            <div class="p-4 flex items-center justify-between border-b border-white/5">
+                <div class="flex items-center gap-3">
+                    <img src="https://res.cloudinary.com/dkogu5r9n/image/upload/v1773313826/293062451_415344233943612_2309683579709414901_n_aoij50.jpg"
+                        alt="Chef Buster" class="w-10 h-10 rounded-full border border-white/10 object-cover">
+                    <div>
+                        <h4 class="text-sm font-semibold text-[#E4E6EB] flex items-center gap-1">
+                            Chef Buster Cuisine <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                viewBox="0 0 24 24" fill="#0866FF">
+                                <path
+                                    d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.4-1.4 2.7 2.7 6.5-6.5 1.4 1.4-7.9 7.9z" />
+                            </svg>
+                        </h4>
+                        <p id="modal-date" class="text-xs text-[#B0B3B8]">Loading...</p>
+                    </div>
+                </div>
+                <button onclick="closeFbModal()"
+                    class="text-[#B0B3B8] hover:bg-white/10 hover:text-white p-2 rounded-full transition-colors focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="overflow-y-auto bg-black">
+                <div id="modal-text" class="p-5 text-sm md:text-base text-[#E4E6EB] bg-[#242526]">Loading...</div>
+                <img id="modal-img" src="" alt="Chef Buster Expanded Post"
+                    class="w-full h-auto max-h-[600px] object-contain">
+            </div>
+
+            <div
+                class="p-4 border-t border-white/5 bg-[#18191A] flex flex-col sm:flex-row justify-between items-center gap-4 shrink-0">
+                <p class="text-zinc-400 text-sm font-light">Join the conversation on Facebook.</p>
+                <a href="https://www.facebook.com/chefbustercuisine/" target="_blank"
+                    class="w-full sm:w-auto bg-[#0866FF] hover:bg-[#0866FF]/80 text-white font-bold py-3 px-8 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                        fill="currentColor">
+                        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                    </svg>
+                    Check it out on Facebook
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Feedback Popup Modal -->
+    <div id="feedback-modal"
+        class="fixed inset-0 z-[200] bg-black/90 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 p-4">
+        <div class="bg-[#111113] w-full max-w-lg rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden border border-white/10 flex flex-col transform scale-95 transition-transform duration-300"
+            id="feedback-modal-content">
+
+            <!-- Header -->
+            <div class="p-5 flex items-center justify-between border-b border-white/5 bg-[#0a0a0c]">
+                <h3 class="text-xl accent-font tracking-widest text-amber-500">Submit Feedback</h3>
+                <button onclick="closeFeedbackModal()"
+                    class="text-[#B0B3B8] hover:bg-white/10 hover:text-white p-2 rounded-full transition-colors focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Form Body -->
+            <div class="p-6 space-y-5">
+                <div class="space-y-2">
+                    <label class="text-xs tracking-widest text-zinc-400 uppercase">Your Name</label>
+                    <input type="text" id="feedback-name"
+                        class="w-full bg-[#050505] border border-white/10 p-4 text-white focus:outline-none focus:border-amber-500 transition-colors rounded placeholder:text-zinc-700"
+                        placeholder="Optional">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs tracking-widest text-zinc-400 uppercase">Your Message <span
+                            class="text-amber-500">*</span></label>
+                    <textarea id="feedback-message" rows="5" required
+                        class="w-full bg-[#050505] border border-white/10 p-4 text-white focus:outline-none focus:border-amber-500 transition-colors rounded placeholder:text-zinc-700"
+                        placeholder="Tell us about your experience..."></textarea>
+                </div>
+                <button onclick="submitFeedback()"
+                    class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold tracking-widest py-4 mt-2 rounded transition-colors shadow-lg shadow-amber-600/20">SEND
+                    FEEDBACK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking confirmation Modal -->
+    <div id="booking-modal"
+        class="fixed inset-0 z-[200] bg-black/90 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 p-4">
+        <div class="bg-[#111113] w-full max-w-sm rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden border border-white/10 flex flex-col transform scale-95 transition-transform duration-300"
+            id="booking-modal-content">
+            <div class="p-5 flex items-center justify-between border-b border-white/5 bg-[#0a0a0c]">
+                <h3 class="text-xl accent-font tracking-widest text-amber-500">Confirm Booking</h3>
+                <button onclick="closeBookingModal()"
+                    class="text-[#B0B3B8] hover:bg-white/10 hover:text-white p-2 rounded-full transition-colors focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6 space-y-5">
+                <div class="bg-blue-500/5 border border-blue-500/20 p-3 rounded-lg flex items-center gap-2 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    <span class="text-blue-400 text-xs">Confirmation will be emailed to your account</span>
+                </div>
+                <div class="bg-black border border-white/5 p-4 rounded-lg text-center mb-2">
+                    <div id="booking-modal-date" class="text-amber-500 text-sm font-bold tracking-widest mb-1">...</div>
+                    <div id="booking-modal-time" class="text-2xl text-white accent-font">...</div>
+                    <div id="booking-modal-capacity" class="text-zinc-500 text-xs mt-1">...</div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs tracking-widest text-zinc-400 uppercase">Your Name <span
+                            class="text-amber-500">*</span></label>
+                    <input type="text" id="booking-name" required
+                        class="w-full bg-[#050505] border border-white/10 p-4 text-white focus:outline-none focus:border-amber-500 transition-colors rounded placeholder:text-zinc-700"
+                        placeholder="Juan Dela Cruz">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs tracking-widest text-zinc-400 uppercase flex justify-between">
+                        <span>Email Address</span>
+                        <span class="text-zinc-600 normal-case">from your account</span>
+                    </label>
+                    <input type="email" id="booking-email" readonly
+                        class="w-full bg-[#050505] border border-white/10 p-4 text-zinc-400 rounded placeholder:text-zinc-700 opacity-60 cursor-not-allowed"
+                        placeholder="juan@example.com">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs tracking-widest text-zinc-400 uppercase">Phone Number <span
+                            class="text-zinc-600">(optional)</span></label>
+                    <input type="tel" id="booking-phone"
+                        class="w-full bg-[#050505] border border-white/10 p-4 text-white focus:outline-none focus:border-amber-500 transition-colors rounded placeholder:text-zinc-700 font-mono"
+                        placeholder="+63 900 000 0000">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs tracking-widest text-zinc-400 uppercase flex justify-between">
+                        <span>Number of Guests <span class="text-amber-500">*</span></span>
+                        <span id="pax-hint" class="text-zinc-600 normal-case">Max: 4</span>
+                    </label>
+                    <div class="flex items-center gap-4 bg-[#050505] border border-white/10 p-1 rounded-lg">
+                        <button type="button" onclick="adjustBookingPax(-1)" class="w-12 h-12 flex items-center justify-center text-zinc-400 hover:text-white transition-colors rounded hover:bg-white/5">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        </button>
+                        <input type="number" id="booking-pax" value="2" min="1" max="15" readonly
+                            class="flex-1 bg-transparent text-center text-xl font-bold text-white outline-none">
+                        <button type="button" onclick="adjustBookingPax(1)" class="w-12 h-12 flex items-center justify-center text-zinc-400 hover:text-white transition-colors rounded hover:bg-white/5">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <button onclick="submitBooking()"
+                    class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold tracking-widest py-4 mt-2 rounded transition-colors shadow-lg shadow-amber-600/20">CONFIRM
+                    RESERVATION</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Popup Modal -->
+    <div id="auth-modal"
+        class="fixed inset-0 z-[200] bg-black/90 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 p-4">
+        <div class="bg-[#111113] w-full max-w-sm rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden border border-white/10 flex flex-col transform scale-95 transition-transform duration-300"
+            id="auth-modal-content">
+
+            <!-- Header -->
+            <div class="p-5 flex items-center justify-between border-b border-white/5 bg-[#0a0a0c]">
+                <h3 id="auth-modal-title" class="text-xl accent-font tracking-widest text-amber-500">Login</h3>
+                <button onclick="closeAuthModal()"
+                    class="text-[#B0B3B8] hover:bg-white/10 hover:text-white p-2 rounded-full transition-colors focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Form Body -->
+            <div class="p-6 space-y-5">
+                <div id="register-fields" class="hidden space-y-5">
+                    <div class="space-y-2">
+                        <label class="text-xs tracking-widest text-zinc-400 uppercase">Admin Secret Key</label>
+                        <input type="password" id="auth-admin-key"
+                            class="w-full bg-[#050505] border border-white/10 p-4 text-white focus:outline-none focus:border-amber-500 transition-colors rounded placeholder:text-zinc-700"
+                            placeholder="Optional (For Admins Only)">
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs tracking-widest text-zinc-400 uppercase">Email</label>
+                    <input type="email" id="auth-email"
+                        class="w-full bg-[#050505] border border-white/10 p-4 text-white focus:outline-none focus:border-amber-500 transition-colors rounded placeholder:text-zinc-700"
+                        placeholder="user@example.com">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs tracking-widest text-zinc-400 uppercase">Password</label>
+                    <input type="password" id="auth-password"
+                        class="w-full bg-[#050505] border border-white/10 p-4 text-white focus:outline-none focus:border-amber-500 transition-colors rounded placeholder:text-zinc-700"
+                        placeholder="••••••••">
+                </div>
+                <button onclick="submitAuth()" id="auth-submit-btn"
+                    class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold tracking-widest py-4 mt-2 rounded transition-colors shadow-lg shadow-amber-600/20">LOGIN</button>
+
+                <!-- Divider -->
+                <div class="flex items-center gap-3 my-1">
+                    <div class="flex-1 h-px bg-white/10"></div>
+                    <span class="text-zinc-600 text-[10px] uppercase tracking-widest">or</span>
+                    <div class="flex-1 h-px bg-white/10"></div>
+                </div>
+
+                <!-- Google Sign-In -->
+                <button onclick="signInWithGoogle()" id="google-signin-btn"
+                    class="w-full flex items-center justify-center gap-3 bg-white text-gray-800 font-bold tracking-wide py-3.5 rounded transition-all hover:bg-gray-100 shadow-md">
+                    <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+                    Continue with Google
+                </button>
+
+                <div class="text-center mt-4 flex flex-col gap-2">
+                    <button onclick="toggleAuthMode()" id="auth-toggle-btn"
+                        class="text-[10px] uppercase tracking-widest text-zinc-500 hover:text-amber-500 transition-colors">Need
+                        an account? Register</button>
+                    <button onclick="sendPasswordReset()" id="forgot-pw-btn"
+                        class="text-[10px] uppercase tracking-widest text-zinc-600 hover:text-zinc-400 transition-colors">Forgot password?</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container added -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-[250] flex flex-col gap-3"></div>
+
+    <!-- USER PROFILE MODAL -->
+    <div id="profile-modal"
+        class="fixed inset-0 z-[200] bg-black/90 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 p-4 hidden">
+        <div class="bg-[#111113] w-full max-w-2xl rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden border border-white/10 flex flex-col transform scale-95 transition-transform duration-300 max-h-[80vh] overflow-y-auto">
+            <!-- Header -->
+            <div class="p-6 flex items-center justify-between border-b border-white/5 bg-[#0a0a0c] sticky top-0 z-10">
+                <h3 class="text-2xl accent-font tracking-widest text-amber-500">My Profile</h3>
+                <button onclick="closeProfileModal()"
+                    class="text-[#B0B3B8] hover:bg-white/10 hover:text-white p-2 rounded-full transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Profile Content -->
+            <div class="p-6 space-y-6">
+                <!-- Profile Header -->
+                <div class="flex items-center gap-6">
+                    <img id="profile-avatar" src="https://ui-avatars.com/api/?name=User&background=ea580c&color=fff&size=100"
+                        alt="Profile" class="w-24 h-24 rounded-full border-2 border-amber-500">
+                    <div>
+                        <h2 id="profile-name" class="text-2xl font-bold text-white">User Name</h2>
+                        <p id="profile-email" class="text-amber-500 text-sm">user@example.com</p>
+                        <p id="profile-member-since" class="text-zinc-400 text-xs mt-1">Member since Jan 2026</p>
+                    </div>
+                </div>
+
+                <!-- Account Information -->
+                <div class="bg-[#050505] rounded-lg p-5 border border-white/5">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-zinc-400 mb-4">Account Information</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs uppercase tracking-widest text-zinc-500 mb-1 block">Full Name</label>
+                            <input type="text" id="profile-full-name" class="w-full bg-[#111113] border border-white/10 p-3 rounded text-white focus:border-amber-500 outline-none transition-colors" placeholder="Your full name">
+                        </div>
+                        <div>
+                            <label class="text-xs uppercase tracking-widest text-zinc-500 mb-1 block">Email</label>
+                            <input type="email" id="profile-form-email" class="w-full bg-[#111113] border border-white/10 p-3 rounded text-white focus:border-amber-500 outline-none transition-colors" placeholder="your@email.com">
+                        </div>
+                        <div>
+                            <label class="text-xs uppercase tracking-widest text-zinc-500 mb-1 block">Phone</label>
+                            <input type="tel" id="profile-phone" class="w-full bg-[#111113] border border-white/10 p-3 rounded text-white focus:border-amber-500 outline-none transition-colors" placeholder="+63 900 123 4567">
+                        </div>
+                        <div>
+                            <label class="text-xs uppercase tracking-widest text-zinc-500 mb-1 block">Location</label>
+                            <input type="text" id="profile-location" class="w-full bg-[#111113] border border-white/10 p-3 rounded text-white focus:border-amber-500 outline-none transition-colors" placeholder="City, Country">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preferences -->
+                <div class="bg-[#050505] rounded-lg p-5 border border-white/5">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-zinc-400 mb-4">Preferences</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" id="profile-notifications" class="w-4 h-4 rounded border-white/20 bg-[#111113]" checked>
+                            <span class="text-sm text-white">Receive booking notifications</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" id="profile-promotions" class="w-4 h-4 rounded border-white/20 bg-[#111113]">
+                            <span class="text-sm text-white">Receive promotional emails</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" id="profile-sms" class="w-4 h-4 rounded border-white/20 bg-[#111113]">
+                            <span class="text-sm text-white">Receive SMS reminders</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Booking History Summary -->
+                <div class="bg-[#050505] rounded-lg p-5 border border-white/5">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-zinc-400 mb-4">Booking Stats</h3>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-amber-500" id="profile-total-bookings">0</p>
+                            <p class="text-xs text-zinc-400">Total Bookings</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-green-500" id="profile-completed">0</p>
+                            <p class="text-xs text-zinc-400">Completed</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-blue-500" id="profile-upcoming">0</p>
+                            <p class="text-xs text-zinc-400">Upcoming</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex gap-3 pt-4 border-t border-white/5">
+                    <button onclick="saveProfileChanges()" class="flex-1 bg-amber-600 hover:bg-amber-500 text-white font-bold tracking-widest py-3 rounded transition-colors">Save Changes</button>
+                    <button onclick="closeProfileModal()" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white font-bold tracking-widest py-3 rounded transition-colors border border-white/10">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <button id="back-to-top"
+        class="fixed bottom-6 left-6 z-[90] bg-amber-600/80 hover:bg-amber-500 text-white p-3 rounded-full shadow-[0_0_15px_rgba(234,88,12,0.3)] backdrop-blur transition-all duration-500 opacity-0 translate-y-10 pointer-events-none border border-white/20">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 15l-6-6-6 6" />
+        </svg>
+    </button>
+
+    <!-- Firebase SDK -->
+    <script>
+        // Firebase init promise - resolved by module script when ready
+        window._fbReady = new Promise((resolve) => {
+            window._resolveFb = resolve;
+        });
+    </script>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import { getFirestore, collection, doc, getDocs, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, query, orderBy, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+      import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, sendPasswordResetEmail, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDdJVUxGBpxv-7Vsh18NDLqElWUi6HsWh0",
+        authDomain: "chefbuster-48981.firebaseapp.com",
+        projectId: "chefbuster-48981",
+        storageBucket: "chefbuster-48981.firebasestorage.app",
+        messagingSenderId: "733553214399",
+        appId: "1:733553214399:web:f58cc78ff9fb0b94cc970a",
+        measurementId: "G-EW3JKSJXRF"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const auth = getAuth(app);
+      const googleProvider = new GoogleAuthProvider();
+
+      // Expose Firebase helpers globally for inline script
+      window._fb = { db, auth, googleProvider, collection, doc, getDocs, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, query, orderBy, writeBatch, signInWithPopup, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail };
+      if (window._resolveFb) window._resolveFb(window._fb);
+
+      // Listen to auth state changes
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          const adminEmails = ['chefbustercuisine@gmail.com'];
+          let role = 'customer';
+
+          // Always check Firestore first for the authoritative role
+          try {
+            const { db, doc, getDoc } = window._fb || {};
+            if (db) {
+              const userDoc = await getDoc(doc(db, 'users', user.uid));
+              if (userDoc.exists() && userDoc.data().role === 'admin') {
+                role = 'admin';
+              }
+            }
+          } catch(e) {
+            console.warn('Auth state: Could not read Firestore role:', e);
+          }
+
+          // Fallback checks only if Firestore didn't confirm admin
+          if (role !== 'admin') {
+            if (adminEmails.includes(user.email)) {
+              role = 'admin';
+            } else {
+              const existingRole = localStorage.getItem('userRole');
+              const existingToken = localStorage.getItem('userToken');
+              if (existingToken === user.uid && existingRole) {
+                role = existingRole;
+              }
+            }
+          }
+
+          localStorage.setItem('userToken', user.uid);
+          localStorage.setItem('userRole', role);
+          localStorage.setItem('userEmail', user.email);
+          localStorage.setItem('userName', user.displayName || user.email);
+          localStorage.setItem('userPhoto', user.photoURL || '');
+        }
+        if(window.updateSessionUI) window.updateSessionUI();
+      });
+    </script>
+    <script>
+        // Pre-initialize EmailJS when page loads
+        window.addEventListener('load', async function() {
+            if (window.emailjs) {
+                emailjs.init({ publicKey: 'xG6tOGlGNXpnAacku' });
+                window.emailjsInitialized = true;
+                console.log('✅ EmailJS pre-initialized on page load');
+            }
+        });
+    </script>
+
+    <script>
+        // --- Session UI Management ---
+        function updateSessionUI() {
+            const role = localStorage.getItem('userRole');
+            const controls = document.getElementById('auth-controls');
+            const adminBtn = document.getElementById('admin-view-btn');
+            const userName = localStorage.getItem('userName');
+            const userPhoto = localStorage.getItem('userPhoto');
+            const isAdmin = role === 'admin';
+
+            if (role) {
+                const photoHTML = userPhoto
+                    ? `<img src="${userPhoto}" class="w-6 h-6 rounded-full border border-white/20 object-cover" referrerpolicy="no-referrer">`
+                    : `<span class="w-6 h-6 rounded-full ${isAdmin ? 'bg-amber-500' : 'bg-amber-600'} flex items-center justify-center text-[10px] font-bold text-black">${(userName||'U')[0].toUpperCase()}</span>`;
+
+                const adminBadge = isAdmin ? `<span class="text-[9px] bg-amber-500 text-black px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">ADMIN</span>` : '';
+
+                controls.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        ${photoHTML}
+                        <div class="flex flex-col leading-none">
+                            <span class="text-[10px] text-zinc-300 font-medium truncate max-w-[80px]">${userName || 'User'}</span>
+                            ${adminBadge}
+                        </div>
+                        <button onclick="openProfileModal()" class="text-[10px] text-amber-500 hover:text-amber-400 transition-colors uppercase tracking-widest font-medium text-left">Profile</button>
+                        <span class="text-zinc-700 text-[10px]">•</span>
+                        <button onclick="logout()" class="text-[10px] text-red-500 hover:text-red-400 transition-colors uppercase tracking-widest font-medium text-left">Logout</button>
+                    </div>`;
+
+                if (isAdmin) {
+                    adminBtn.classList.remove('hidden');
+                } else {
+                    adminBtn.classList.add('hidden');
+                }
+            } else {
+                controls.innerHTML = `
+                    <button onclick="openAuthModal('login')" class="text-[10px] text-zinc-500 hover:text-amber-500 transition-colors uppercase tracking-widest font-medium text-left">Login</button>
+                    <span class="hidden md:inline text-zinc-800 text-[10px]">•</span>
+                    <button onclick="openAuthModal('register')" class="text-[10px] text-zinc-500 hover:text-amber-500 transition-colors uppercase tracking-widest font-medium text-left">Register</button>
+                `;
+                adminBtn.classList.add('hidden');
+            }
+        }
+
+        window.signInWithGoogle = async function() {
+            if (!window._fb) { 
+                showToast("Firebase is initializing, please wait..."); 
+                window._fbReady.then(() => signInWithGoogle());
+                return; 
+            }
+            const { auth, googleProvider, signInWithPopup, db, doc, getDoc, setDoc } = window._fb;
+            const btn = document.getElementById('google-signin-btn');
+            btn.disabled = true;
+            btn.innerHTML = `<svg class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Signing in...`;
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
+                const adminEmails = ['chefbustercuisine@gmail.com'];
+
+                // ── CHECK FIRESTORE FOR SAVED ROLE ─────────────────────────────
+                let savedRole = null;
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    if (userDoc.exists()) {
+                        savedRole = userDoc.data().role;
+                    }
+                } catch(e) {
+                    console.warn('Could not read user role from Firestore:', e);
+                }
+
+                let role = 'customer';
+                if (adminEmails.includes(user.email)) {
+                    role = 'admin';
+                } else if (savedRole === 'admin') {
+                    role = 'admin';  // Previously promoted via secret key
+                }
+
+                // Save/update user record in Firestore
+                try {
+                    await setDoc(doc(db, 'users', user.uid), {
+                        email: user.email,
+                        role: role,
+                        displayName: user.displayName || user.email,
+                        photoURL: user.photoURL || '',
+                        updatedAt: new Date().toISOString()
+                    }, { merge: true });
+                } catch(e) {
+                    console.warn('Could not save user role to Firestore:', e);
+                }
+
+                localStorage.setItem('userToken', user.uid);
+                localStorage.setItem('userRole', role);
+                localStorage.setItem('userEmail', user.email);
+                localStorage.setItem('userName', user.displayName || user.email);
+                localStorage.setItem('userPhoto', user.photoURL || '');
+
+                updateSessionUI();
+                closeAuthModal();
+
+                const isAdmin = role === 'admin';
+                showToast(`${isAdmin ? '👑 Admin' : '✅'} Welcome, ${user.displayName || user.email}!`);
+                if (isAdmin) {
+                    setTimeout(() => { window.location.href = 'admin.html'; }, 1000);
+                }
+            } catch(e) {
+                showToast("Google sign-in failed. Please try again.");
+                console.error(e);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg> Continue with Google`;
+            }
+        };window.sendPasswordReset = async () => {
+            const email = document.getElementById('auth-email').value.trim();
+            if (!email) { showToast('Enter your email address first.', 'error'); return; }
+            try {
+                const { auth } = window._fb;
+                await sendPasswordResetEmail(auth, email);
+                showToast('Password reset email sent! Check your inbox.');
+                closeAuthModal();
+            } catch(e) {
+                showToast('Could not send reset email. Check the address and try again.');
+            }
+        };
+
+        window.logout = async () => {
+            if (window._fb && window._fb.auth) {
+                try { await window._fb.signOut(window._fb.auth); } catch(e) {}
+            }
+            localStorage.clear();
+            showToast("Logged out successfully.");
+            updateSessionUI();
+        };
+
+        // --- Video Sound Control ---
+        function toggleVideoSound() {
+            const video = document.getElementById('hero-video');
+            const mutedIcon = document.getElementById('sound-icon-muted');
+            const unmutedIcon = document.getElementById('sound-icon-unmuted');
+            const soundText = document.getElementById('sound-text');
+
+            video.muted = !video.muted;
+
+            if (video.muted) {
+                mutedIcon.classList.remove('hidden');
+                unmutedIcon.classList.add('hidden');
+                soundText.textContent = "Unmute";
+            } else {
+                mutedIcon.classList.add('hidden');
+                unmutedIcon.classList.remove('hidden');
+                soundText.textContent = "Mute";
+            }
+        }
+
+        // --- Live Menu Fetch Logic ---
+        async function fetchLiveMenu() {
+            if (!window._fb) {
+                showToast("Loading menu...", "info");
+                window._fbReady.then(() => fetchLiveMenu());
+                return;
+            }
+            const { db, collection, query, orderBy, onSnapshot } = window._fb;
+            const grid = document.getElementById('menu-grid');
+            grid.innerHTML = `<div class="col-span-2 text-center text-zinc-600 py-10 text-sm italic">Loading menu from kitchen...</div>`;
+
+            const q = query(collection(db, 'menu_items'), orderBy('createdAt'));
+            onSnapshot(q, (snapshot) => {
+                if (snapshot.empty) {
+                    grid.innerHTML = `<div class="col-span-2 text-center py-10">
+                        <p class="text-zinc-500 italic mb-4">Menu is being prepared. Check back shortly!</p>
+                        <p class="text-zinc-600 text-xs">If you're the admin, go to Admin Dashboard to seed the menu.</p>
+                    </div>`;
+                    return;
+                }
+                const activeItems = snapshot.docs
+                    .map(d => ({ firestoreId: d.id, ...d.data() }))
+                    .filter(item => item.active !== false);
+                renderMenu(activeItems);
+            }, (err) => {
+                console.error("Menu listener error:", err);
+                grid.innerHTML = `<div class="col-span-2 text-center text-red-400 py-10 text-sm">Unable to load menu. Please refresh.</div>`;
+            });
+        }
+
+        function renderMenu(items) {
+            const grid = document.getElementById('menu-grid');
+            grid.innerHTML = '';
+
+            const activeTab = document.querySelector('.menu-tab.text-amber-500');
+            const currentCategory = activeTab ? activeTab.getAttribute('data-category') : 'all';
+
+            if (items.length === 0) {
+                grid.innerHTML = `<div class="col-span-2 text-center text-zinc-500 py-10">Menu is being updated. Check back soon!</div>`;
+                return;
+            }
+
+            // Sort: new items first, then by category order
+            const catOrder = { chicken:1, pork:2, lechon:3, bulaklak:4, pasta:5, drinks:6, sides:7 };
+            items.sort((a,b) => {
+                if (a.status==='new' && b.status!=='new') return -1;
+                if (b.status==='new' && a.status!=='new') return 1;
+                return (catOrder[a.category]||99) - (catOrder[b.category]||99);
+            });
+
+            items.forEach((item, index) => {
+                const isVisible = currentCategory === 'all' || item.category === currentCategory;
+                if (!isVisible) return;
+
+                const div = document.createElement('div');
+                const isNew = item.status === 'new';
+
+                // First new item gets the scroll anchor
+                if (isNew && !document.getElementById('new-item')) div.id = "new-item";
+
+                div.className = `menu-item flex justify-between items-end border-b pb-4 group tab-animate ${isNew ? 'border-amber-500/50 relative' : 'border-white/10'}`;
+                div.setAttribute('data-category', item.category || 'mains');
+
+                let badge = '';
+                if (isNew) {
+                    badge = `<div class="absolute -top-6 left-0 bg-amber-600 text-white text-[10px] uppercase font-bold tracking-widest px-2 py-1 rounded shadow-[0_0_15px_rgba(234,88,12,0.4)] z-10 flex items-center gap-2"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span></span>Brand New</div>`;
+                } else if (item.status === 'unavailable') {
+                    badge = `<div class="absolute -top-6 left-0 bg-red-900/80 text-red-300 text-[10px] uppercase font-bold tracking-widest px-2 py-1 rounded z-10">Currently Unavailable</div>`;
+                }
+
+                div.innerHTML = `
+                    ${badge}
+                    <div class="pr-4 flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <h3 class="text-xl ${isNew ? 'text-amber-500' : 'group-hover:text-amber-500'} transition-colors">${item.name}</h3>
+                            <span class="text-[9px] uppercase tracking-widest text-zinc-600 bg-white/5 px-2 py-0.5 rounded border border-white/5">${item.category}</span>
+                        </div>
+                        <p class="text-zinc-500 text-sm font-light">${item.description || item.desc || ''}</p>
+                    </div>
+                    <span class="text-xl font-bold font-mono ${isNew ? 'text-white' : 'text-zinc-300'} shrink-0 ml-4">₱${item.price}</span>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        // --- Firebase-Backed Reservation Slots ---
+        let mockAvailableSlots = []; // will be populated from Firestore
+
+        function formatTime12(time24) {
+            const [h, m] = time24.split(':');
+            const hr = parseInt(h);
+            return `${hr % 12 || 12}:${m} ${hr >= 12 ? 'PM' : 'AM'}`;
+        }
+
+        function formatDateReadable(dateStr) {
+            const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateStr).toLocaleDateString(undefined, options);
+        }
+
+        async function loadSlotsFromFirebase() {
+            if (!window._fb) {
+                window._fbReady.then(() => loadSlotsFromFirebase());
+                return;
+            }
+            try {
+                const { db, collection, query, orderBy, onSnapshot } = window._fb;
+                const q = query(collection(db, 'slots'), orderBy('date'));
+                onSnapshot(q, (snapshot) => {
+                    mockAvailableSlots = snapshot.docs
+                        .map(d => ({ firestoreId: d.id, ...d.data() }))
+                        .filter(s => !s.booked);
+                    renderAvailableSlots();
+                });
+            } catch(e) {
+                console.warn("Firebase slots error, using fallback:", e);
+                mockAvailableSlots = [
+                    { id: "S-1002", firestoreId: null, date: "2026-03-01", time: "20:30", pax: 2, booked: false },
+                    { id: "S-1004", firestoreId: null, date: "2026-03-02", time: "19:30", pax: 4, booked: false },
+                    { id: "S-1005", firestoreId: null, date: "2026-03-03", time: "18:00", pax: 6, booked: false }
+                ];
+                renderAvailableSlots();
+            }
+        }
+
+        function renderAvailableSlots() {
+            const grid = document.getElementById('available-slots-grid');
+
+            if (mockAvailableSlots.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-10 text-center text-zinc-500 italic">No available slots at the moment. Please check back later.</div>`;
+                return;
+            }
+
+            grid.innerHTML = mockAvailableSlots.map(slot => `
+                <div onclick="openBookingModal('${slot.id}', '${slot.date}', '${slot.time}', ${slot.pax})" class="bg-[#111113] border border-white/10 p-6 rounded-xl hover:border-amber-500/50 cursor-pointer transition-all duration-300 group hover:-translate-y-1 shadow-lg relative overflow-hidden" data-requires-login="true">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-amber-500/50 group-hover:bg-amber-500 transition-colors"></div>
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] uppercase px-2 py-1 rounded tracking-wider font-bold">Open</span>
+                        <span class="text-zinc-600 text-xs font-mono uppercase">Ref: ${slot.id}</span>
+                    </div>
+                    <h4 class="text-amber-500 font-bold mb-1 tracking-widest text-sm uppercase">${formatDateReadable(slot.date)}</h4>
+                    <div class="text-white text-3xl accent-font mb-4 tracking-wider">${formatTime12(slot.time)}</div>
+                    <div class="flex items-center gap-2 text-zinc-400 text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        Max ${Math.min(slot.pax, 15)} guests
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        let currentlySelectedSlot = null;
+
+        function openBookingModal(id, date, time, maxPax) {
+            // Check if user is logged in
+            const userToken = localStorage.getItem('userToken');
+            if (!userToken) {
+                showToast("Please login first to make a reservation.");
+                setTimeout(() => openAuthModal('login'), 800);
+                return;
+            }
+
+            currentlySelectedSlot = id;
+            document.getElementById('booking-modal-date').textContent = formatDateReadable(date).toUpperCase();
+            document.getElementById('booking-modal-time').textContent = formatTime12(time);
+            document.getElementById('booking-modal-capacity').textContent = `Max capacity: ${maxPax} people`;
+            document.getElementById('pax-hint').textContent = `Max: ${maxPax}`;
+            // Set max on pax input and reset to 1
+            const paxInput = document.getElementById('booking-pax');
+            paxInput.max = Math.min(maxPax, 15);
+            paxInput.value = Math.min(2, Math.min(maxPax, 15));
+
+            // Auto-fill name from logged-in user
+            const userName = localStorage.getItem('userName') || '';
+            const userEmail = localStorage.getItem('userEmail') || '';
+            document.getElementById('booking-name').value = userName;
+            document.getElementById('booking-email').value = userEmail;
+            // Make email read-only since it comes from auth
+            document.getElementById('booking-email').readOnly = true;
+            document.getElementById('booking-email').classList.add('opacity-60', 'cursor-not-allowed');
+
+            const modal = document.getElementById('booking-modal');
+            const modalContent = document.getElementById('booking-modal-content');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-95');
+            modalContent.classList.add('scale-100');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeBookingModal() {
+            const modal = document.getElementById('booking-modal');
+            const modalContent = document.getElementById('booking-modal-content');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        
+        // Email Notification using EmailJS REST API
+        async function sendBookingEmail(details) {
+            const EMAILJS_SERVICE_ID = 'service_es4jn1f';
+            const EMAILJS_TEMPLATE_ID = 'template_vi0iku9';
+            const EMAILJS_PUBLIC_KEY = 'xG6tOGlGNXpnAacku';
+
+            // ── EMAIL 1: Customer Confirmation ─────────────────────────────────────
+            const customerParams = {
+                to_name: details.name,
+                to_email: details.email,
+                reply_to: 'chefbustercuisine@gmail.com',
+                from_name: 'Chef Buster Cuisine',
+                booking_date: details.date,
+                booking_time: details.time,
+                guest_count: details.pax,
+                reference: details.slotId,
+                message: `Hi ${details.name}!
+
+Your reservation at Chef Buster Cuisine is confirmed!
+
+📅 Date: ${details.date}
+⏰ Time: ${details.time}
+👥 Guests: ${details.pax}
+🎫 Reference: ${details.slotId}
+
+See you soon!`
+            };
+
+            // ── EMAIL 2: Admin Notification ────────────────────────────────────────
+            const adminParams = {
+                to_name: 'Chef Buster Admin',
+                to_email: 'chefbustercuisine@gmail.com',
+                reply_to: details.email,
+                from_name: 'Chef Buster Booking System',
+                booking_date: details.date,
+                booking_time: details.time,
+                guest_count: details.pax,
+                reference: details.slotId,
+                message: `NEW BOOKING ALERT!
+
+Customer: ${details.name}
+Email: ${details.email}
+Phone: ${details.phone || 'N/A'}
+
+📅 Date: ${details.date}
+⏰ Time: ${details.time}
+👥 Guests: ${details.pax}
+🎫 Reference: ${details.slotId}
+
+Please prepare the table.`
+            };
+
+            console.log('📧 Sending dual emails via EmailJS...');
+            console.log('   → Customer:', details.email);
+            console.log('   → Admin: chefbustercuisine@gmail.com');
+
+            try {
+                // Send both emails in parallel
+                const [customerRes, adminRes] = await Promise.all([
+                    fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            service_id: EMAILJS_SERVICE_ID,
+                            template_id: EMAILJS_TEMPLATE_ID,
+                            user_id: EMAILJS_PUBLIC_KEY,
+                            template_params: customerParams
+                        })
+                    }),
+                    fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            service_id: EMAILJS_SERVICE_ID,
+                            template_id: EMAILJS_TEMPLATE_ID,
+                            user_id: EMAILJS_PUBLIC_KEY,
+                            template_params: adminParams
+                        })
+                    })
+                ]);
+
+                const customerText = await customerRes.text();
+                const adminText = await adminRes.text();
+
+                console.log('EmailJS Customer response:', customerRes.status, customerText);
+                console.log('EmailJS Admin response:', adminRes.status, adminText);
+
+                if (customerRes.ok && adminRes.ok) {
+                    showToast("Confirmation sent to your email! 📧");
+                    return true;
+                } else {
+                    const errMsg = !customerRes.ok ? `Customer email failed: ${customerText}` : `Admin email failed: ${adminText}`;
+                    console.error('EmailJS partial failure:', errMsg);
+                    showToast("Booking confirmed! (Email notification delayed)");
+                    return false;
+                }
+
+            } catch(err) {
+                console.error('❌ EmailJS ERROR:', err);
+                showToast("Booking confirmed! (Email could not be sent)");
+                return false;
+            }
+        }
+
+        // DEBUG: Test EmailJS manually from browser console
+        // Usage: testEmailJS('your@email.com', 'Test Name')
+        window.testEmailJS = async function(testEmail, testName) {
+            console.log('Testing EmailJS dual email with:', testEmail, testName);
+            const result = await sendBookingEmail({
+                name: testName || 'Test User',
+                email: testEmail,
+                phone: '+63 912 345 6789',
+                date: '2026-05-24',
+                time: '7:30 PM',
+                pax: 2,
+                slotId: 'TEST-001',
+                maxPax: 4
+            });
+            console.log('Test result:', result);
+            return result;
+        };
+
+        function adjustBookingPax(delta) {
+            const input = document.getElementById('booking-pax');
+            const max = parseInt(input.max) || 50;
+            input.value = Math.max(1, Math.min(max, (parseInt(input.value) || 1) + delta));
+        }
+
+        async function submitBooking() {
+            const name = document.getElementById('booking-name').value.trim();
+            const phone = document.getElementById('booking-phone').value.trim();
+            const pax = parseInt(document.getElementById('booking-pax').value) || 1;
+            // Get email from logged-in user
+            const email = localStorage.getItem('userEmail');
+            const userId = localStorage.getItem('userToken');
+
+            if (!name) {
+                showToast("Please provide your name to confirm.");
+                return;
+            }
+            if (!email || !userId) {
+                showToast("Session expired. Please login again.");
+                openAuthModal('login');
+                return;
+            }
+
+            // Find slot details
+            const slot = mockAvailableSlots.find(s => s.id === currentlySelectedSlot);
+            if (!slot) { closeBookingModal(); return; }
+
+            // Validate pax doesn't exceed max
+            if (pax > slot.pax) {
+                showToast(`Maximum ${slot.pax} guests allowed for this slot.`);
+                return;
+            }
+            if (pax > 15) {
+                showToast("Maximum 15 guests allowed per booking.");
+                return;
+            }
+
+            const btn = document.querySelector('#booking-modal button[onclick="submitBooking()"]');
+            if (btn) { btn.disabled = true; btn.textContent = 'CONFIRMING...'; }
+
+            try {
+                const { db, collection, addDoc, doc, updateDoc, serverTimestamp, writeBatch } = window._fb;
+
+                // Use batch write for atomic operation: lock slot + create booking
+                const batch = writeBatch(db);
+                const slotRef = doc(db, 'slots', slot.firestoreId);
+                const bookingRef = doc(collection(db, 'bookings'));
+
+                // Update slot: mark as booked with user details
+                batch.update(slotRef, { 
+                    booked: true, 
+                    guest: name, 
+                    contact: phone,
+                    bookedPax: pax,
+                    bookedAt: serverTimestamp(),
+                    bookedBy: name
+                });
+
+                // Create booking record
+                batch.set(bookingRef, {
+                    slotId: slot.id,
+                    slotFirestoreId: slot.firestoreId,
+                    date: slot.date,
+                    time: slot.time,
+                    maxPax: slot.pax,
+                    bookedPax: pax,
+                    guest: name,
+                    contact: phone,
+                    status: 'confirmed',
+                    createdAt: serverTimestamp()
+                });
+
+                await batch.commit();
+                showToast("Success! Your reservation is confirmed and locked.");
+            } catch(e) {
+                console.error("Firebase booking error:", e);
+                showToast("Booking failed. Please try again.");
+                if (btn) { btn.disabled = false; btn.textContent = 'CONFIRM RESERVATION'; }
+                return;
+            }
+
+            // Send SMS confirmation
+            await sendBookingEmail({
+                name: name,
+                email: email,
+                phone: phone,
+                date: slot.date,
+                time: formatTime12(slot.time),
+                pax: pax,
+                slotId: slot.id,
+                maxPax: slot.pax
+            });
+
+            document.getElementById('booking-name').value = '';
+            document.getElementById('booking-phone').value = '';
+            document.getElementById('booking-pax').value = '2';
+            if (btn) { btn.disabled = false; btn.textContent = 'CONFIRM RESERVATION'; }
+            closeBookingModal();
+        }
+
+        document.getElementById('booking-modal').addEventListener('click', function (e) {
+            if (e.target === this) closeBookingModal();
+        });
+
+
+        // Preloader Removal & Initialize Logic
+        // Wait for Firebase module to be ready before making DB calls
+        // Wait for Firebase to be ready using the promise
+        window._fbReady.then(() => {
+            console.log('Firebase ready, initializing app...');
+            fetchLiveMenu();
+            loadSlotsFromFirebase();
+            updateSessionUI();
+        }).catch(err => {
+            console.error('Firebase init failed:', err);
+            showToast('Failed to connect to database. Please refresh.', 'error');
+        });
+
+        // Always handle preloader on load
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            setTimeout(() => {
+                preloader.style.opacity = '0';
+                document.body.classList.remove('overflow-hidden');
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                }, 1000);
+            }, 800);
+        });
+
+        // Menu Tabs Logic
+        const tabBtns = document.querySelectorAll('.menu-tab');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => {
+                    b.classList.remove('text-amber-500', 'border-amber-500');
+                    b.classList.add('text-zinc-500', 'border-transparent');
+                });
+                btn.classList.remove('text-zinc-500', 'border-transparent');
+                btn.classList.add('text-amber-500', 'border-amber-500');
+
+                const targetCategory = btn.getAttribute('data-category');
+
+                document.querySelectorAll('.menu-item').forEach(item => {
+                    item.classList.remove('tab-animate');
+                    if (targetCategory === 'all' || item.getAttribute('data-category') === targetCategory) {
+                        item.style.display = 'flex';
+                        setTimeout(() => item.classList.add('tab-animate'), 10);
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Digital Clock Logic
+        function updateClock() {
+            const clockElement = document.getElementById('digital-clock');
+            if (!clockElement) return;
+
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+
+            clockElement.textContent = `${hours}:${minutes} ${ampm}`;
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // --- Exterior Day/Night Switch Logic ---
+        const extThemeToggle = document.getElementById('ext-theme-toggle');
+        const extToggleCircle = document.getElementById('ext-toggle-circle');
+        const extSunIcon = document.getElementById('ext-sun-icon');
+        const extMoonIcon = document.getElementById('ext-moon-icon');
+        const extImage = document.getElementById('ext-image');
+        const extOverlay = document.getElementById('ext-overlay');
+
+        const imageDayURL = 'https://res.cloudinary.com/dkogu5r9n/image/upload/v1773342053/Gemini_Generated_Image_hluppbhluppbhlup_zmxlcn.png';
+        const imageNightURL = 'https://res.cloudinary.com/dkogu5r9n/image/upload/v1773341818/night_c5oum2.jpg';
+
+        let isExtNightMode = false;
+
+        function applyExtTheme(night) {
+            extImage.style.opacity = '0.1';
+
+            setTimeout(() => {
+                if (night) {
+                    extToggleCircle.classList.add('translate-x-7');
+                    extToggleCircle.classList.remove('translate-x-0');
+                    extMoonIcon.classList.add('text-amber-500');
+                    extMoonIcon.classList.remove('text-zinc-500');
+                    extSunIcon.classList.add('text-zinc-500');
+                    extSunIcon.classList.remove('text-amber-500');
+                    extImage.src = imageNightURL;
+                    if (extOverlay) extOverlay.classList.remove('bg-black/10');
+                    if (extOverlay) extOverlay.classList.add('bg-black/40');
+                } else {
+                    extToggleCircle.classList.remove('translate-x-7');
+                    extToggleCircle.classList.add('translate-x-0');
+                    extSunIcon.classList.add('text-amber-500');
+                    extSunIcon.classList.remove('text-zinc-500');
+                    extMoonIcon.classList.add('text-zinc-500');
+                    extMoonIcon.classList.remove('text-amber-500');
+                    extImage.src = imageDayURL;
+                    if (extOverlay) extOverlay.classList.remove('bg-black/40');
+                    if (extOverlay) extOverlay.classList.add('bg-black/10');
+                }
+
+                extImage.onload = () => { extImage.style.opacity = '1'; };
+            }, 150);
+        }
+
+        if (extThemeToggle) {
+            const currentHour = new Date().getHours();
+            isExtNightMode = currentHour >= 18 || currentHour < 6;
+            applyExtTheme(isExtNightMode);
+
+            extThemeToggle.addEventListener('click', () => {
+                isExtNightMode = !isExtNightMode;
+                applyExtTheme(isExtNightMode);
+            });
+        }
+
+
+        // Mobile Menu Toggle
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        mobileBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Dynamic Facebook Modal Logic
+        function openFbModal(element) {
+            const modal = document.getElementById('fb-modal');
+            const modalContent = document.getElementById('fb-modal-content');
+
+            document.getElementById('modal-date').textContent = element.getAttribute('data-date');
+            document.getElementById('modal-text').innerHTML = element.getAttribute('data-content');
+            document.getElementById('modal-img').src = element.getAttribute('data-img');
+
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-95');
+            modalContent.classList.add('scale-100');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeFbModal() {
+            const modal = document.getElementById('fb-modal');
+            const modalContent = document.getElementById('fb-modal-content');
+
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            document.body.classList.remove('overflow-hidden');
+
+            setTimeout(() => {
+                document.getElementById('modal-img').src = '';
+            }, 300);
+        }
+
+        document.getElementById('fb-modal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeFbModal();
+            }
+        });
+
+        // Feedback Modal Logic
+        function openFeedbackModal() {
+            const modal = document.getElementById('feedback-modal');
+            const modalContent = document.getElementById('feedback-modal-content');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-95');
+            modalContent.classList.add('scale-100');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeFeedbackModal() {
+            const modal = document.getElementById('feedback-modal');
+            const modalContent = document.getElementById('feedback-modal-content');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        document.getElementById('feedback-modal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeFeedbackModal();
+            }
+        });
+
+        // --- Auth Modal Logic ---
+        let currentAuthMode = 'login';
+
+        function openAuthModal(mode) {
+            currentAuthMode = mode;
+            updateAuthUI();
+            const modal = document.getElementById('auth-modal');
+            const modalContent = document.getElementById('auth-modal-content');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-95');
+            modalContent.classList.add('scale-100');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeAuthModal() {
+            const modal = document.getElementById('auth-modal');
+            const modalContent = document.getElementById('auth-modal-content');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        function toggleAuthMode() {
+            currentAuthMode = currentAuthMode === 'login' ? 'register' : 'login';
+            updateAuthUI();
+        }
+
+        function updateAuthUI() {
+            const title = document.getElementById('auth-modal-title');
+            const submitBtn = document.getElementById('auth-submit-btn');
+            const toggleBtn = document.getElementById('auth-toggle-btn');
+            const regFields = document.getElementById('register-fields');
+
+            if (currentAuthMode === 'login') {
+                title.textContent = 'Login';
+                submitBtn.textContent = 'LOGIN';
+                toggleBtn.textContent = 'Need an account? Register';
+                regFields.classList.add('hidden');
+            } else {
+                title.textContent = 'Register';
+                submitBtn.textContent = 'REGISTER';
+                toggleBtn.textContent = 'Already have an account? Login';
+                regFields.classList.remove('hidden');
+            }
+        }
+
+        async function submitAuth() {
+            // Wait for Firebase to be ready
+            if (!window._fb) {
+                showToast("Firebase is initializing, please wait...");
+                window._fbReady.then(() => submitAuth());
+                return;
+            }
+
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value;
+            const adminKey = document.getElementById('auth-admin-key').value.trim();
+            const submitBtn = document.getElementById('auth-submit-btn');
+
+            if (!email || !password) {
+                showToast("Please enter both email and password.");
+                return;
+            }
+
+            // Validate admin key (works for both login AND register)
+            const ADMIN_SECRET = 'CHEFBUSTERSTAFF2026';
+            const isAdminKeyValid = adminKey === ADMIN_SECRET;
+            const isAdminKeyProvided = adminKey !== '';
+
+            if (isAdminKeyProvided && !isAdminKeyValid) {
+                showToast("Invalid Admin Secret Key!");
+                return;
+            }
+
+            if (password.length < 6) {
+                showToast("Password must be at least 6 characters.");
+                return;
+            }
+
+            const originalBtnText = submitBtn.textContent;
+            submitBtn.textContent = 'PROCESSING...';
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
+
+            try {
+                const { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, db, doc, getDoc, setDoc } = window._fb;
+                let userCredential;
+
+                if (currentAuthMode === 'register') {
+                    userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                } else {
+                    userCredential = await signInWithEmailAndPassword(auth, email, password);
+                }
+
+                const user = userCredential.user;
+                const adminEmails = ['chefbustercuisine@gmail.com'];
+
+                // ── CHECK FIRESTORE FOR SAVED ROLE ─────────────────────────────
+                let savedRole = null;
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    if (userDoc.exists()) {
+                        savedRole = userDoc.data().role;
+                    }
+                } catch(e) {
+                    console.warn('Could not read user role from Firestore:', e);
+                }
+
+                // Determine role with priority:
+                // 1. Hardcoded admin emails
+                // 2. Previously saved role in Firestore (from secret key)
+                // 3. Admin key provided this time
+                // 4. Default to customer
+                let role = 'customer';
+                if (adminEmails.includes(user.email)) {
+                    role = 'admin';
+                } else if (savedRole === 'admin') {
+                    role = 'admin';  // Previously promoted via secret key
+                } else if (isAdminKeyValid) {
+                    role = 'admin';  // First-time promotion via secret key
+                }
+
+                // ── SAVE ROLE TO FIRESTORE ─────────────────────────────────────
+                // Always update Firestore so admin status persists across devices/logouts
+                try {
+                    await setDoc(doc(db, 'users', user.uid), {
+                        email: user.email,
+                        role: role,
+                        displayName: user.displayName || user.email,
+                        photoURL: user.photoURL || '',
+                        updatedAt: new Date().toISOString()
+                    }, { merge: true });
+                } catch(e) {
+                    console.warn('Could not save user role to Firestore:', e);
+                    // Don't block auth if Firestore fails — still log them in
+                }
+
+                localStorage.setItem('userToken', user.uid);
+                localStorage.setItem('userRole', role);
+                localStorage.setItem('userEmail', user.email);
+                localStorage.setItem('userName', user.displayName || user.email);
+                localStorage.setItem('userPhoto', user.photoURL || '');
+
+                const isAdmin = role === 'admin';
+                showToast(`${isAdmin ? '👑 Admin' : '✅'} ${currentAuthMode === 'login' ? 'Login' : 'Registration'} successful!`);
+
+                document.getElementById('auth-email').value = '';
+                document.getElementById('auth-password').value = '';
+                document.getElementById('auth-admin-key').value = '';
+
+                updateSessionUI();
+                closeAuthModal();
+
+                if (isAdmin) {
+                    setTimeout(() => { window.location.href = 'admin.html'; }, 1000);
+                }
+
+            } catch (error) {
+                console.error("Auth/DB Error:", error.code, error.message, error);
+
+                // Handle Firestore permission errors (from setDoc/getDoc)
+                if (error.code === 'permission-denied' || error.message?.includes('Missing or insufficient permissions')) {
+                    showToast('Database permission denied. Ask admin to update Firestore rules.', 'error');
+                } else {
+                    const msg = {
+                        'auth/user-not-found': 'No account found with that email.',
+                        'auth/wrong-password': 'Incorrect password.',
+                        'auth/email-already-in-use': 'This email is already registered. Try logging in instead.',
+                        'auth/weak-password': 'Password must be at least 6 characters.',
+                        'auth/invalid-email': 'Please enter a valid email address.',
+                        'auth/invalid-credential': 'Incorrect email or password.',
+                        'auth/too-many-requests': 'Too many attempts. Please wait and try again.',
+                        'auth/network-request-failed': 'Network error. Check your internet connection.',
+                        'auth/operation-not-allowed': 'Email/password sign-in is not enabled. Enable it in Firebase Console.'
+                    }[error.code] || (error.message || `Error: ${error.code || 'Unknown error'}`);
+                    showToast(msg);
+                }
+            } finally {
+                submitBtn.textContent = originalBtnText;
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+            }
+        }document.getElementById('auth-modal').addEventListener('click', function (e) {
+            if (e.target === this) closeAuthModal();
+        });
+
+        // Toast Popup Logic
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'bg-[#18191A] border border-amber-500/30 text-white px-6 py-4 rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.8)] text-sm tracking-wide flex items-center gap-3 toast-enter';
+            toast.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> ${message}`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.replace('toast-enter', 'toast-exit');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        async function submitFeedback() {
+            const msgInput = document.getElementById('feedback-message');
+            const nameInput = document.getElementById('feedback-name');
+            if (msgInput.value.trim() === '') {
+                msgInput.focus();
+                return;
+            }
+            const submitBtn = document.querySelector('#feedback-modal button[onclick]');
+            if(submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending...'; }
+            try {
+                if(!window._fb) throw new Error('Firebase not ready. Please refresh and try again.');
+                const { db, collection, addDoc, serverTimestamp } = window._fb;
+                await addDoc(collection(db, 'feedback'), {
+                    user: nameInput.value.trim() || 'Anonymous',
+                    msg: msgInput.value.trim(),
+                    read: false,
+                    createdAt: serverTimestamp()
+                });
+                showToast("Thank you! Your feedback has been sent.");
+                msgInput.value = '';
+                nameInput.value = '';
+                closeFeedbackModal();
+            } catch(e) {
+                console.error("Firebase feedback error:", e);
+                showToast("Could not send feedback: " + (e.message || e));
+            } finally {
+                if(submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'SEND FEEDBACK'; }
+            }
+        }
+
+        // Back to Top Logic
+        const backToTopBtn = document.getElementById('back-to-top');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                backToTopBtn.classList.remove('opacity-0', 'translate-y-10', 'pointer-events-none');
+                backToTopBtn.classList.add('opacity-100', 'translate-y-0');
+            } else {
+                backToTopBtn.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none');
+                backToTopBtn.classList.remove('opacity-100', 'translate-y-0');
+            }
+        });
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ── PROFILE MODAL FUNCTIONS ──────────────────────────────────
+        window.openProfileModal = () => {
+            const modal = document.getElementById('profile-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0', 'pointer-events-none'), 10);
+            loadProfileData();
+        };
+
+        window.closeProfileModal = () => {
+            const modal = document.getElementById('profile-modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        };
+
+        window.loadProfileData = () => {
+            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+            const userName = localStorage.getItem('userName') || 'User';
+            const userEmail = localStorage.getItem('userEmail') || 'user@example.com';
+            
+            document.getElementById('profile-name').textContent = userName;
+            document.getElementById('profile-email').textContent = userEmail;
+            document.getElementById('profile-full-name').value = userData.fullName || userName;
+            document.getElementById('profile-form-email').value = userEmail;
+            document.getElementById('profile-phone').value = userData.phone || '';
+            document.getElementById('profile-location').value = userData.location || '';
+            
+            // Update avatar
+            const avatarName = userName.replace(/[^a-zA-Z\s]/g, '');
+            document.getElementById('profile-avatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(avatarName)}&background=ea580c&color=fff&size=100`;
+            
+            // Load preferences
+            document.getElementById('profile-notifications').checked = userData.notifications !== false;
+            document.getElementById('profile-promotions').checked = userData.promotions === true;
+            document.getElementById('profile-sms').checked = userData.sms === true;
+        };
+
+        window.saveProfileChanges = async () => {
+            const userData = {
+                fullName: document.getElementById('profile-full-name').value,
+                phone: document.getElementById('profile-phone').value,
+                location: document.getElementById('profile-location').value,
+                notifications: document.getElementById('profile-notifications').checked,
+                promotions: document.getElementById('profile-promotions').checked,
+                sms: document.getElementById('profile-sms').checked
+            };
+            
+            localStorage.setItem('userData', JSON.stringify(userData));
+            localStorage.setItem('userName', userData.fullName);
+            
+            try {
+                if(window._fb) {
+                    const { db, doc, setDoc } = window._fb;
+                    const userToken = localStorage.getItem('userToken');
+                    if(userToken) {
+                        await setDoc(doc(db, 'users', userToken), userData, { merge: true });
+                    }
+                }
+                showToast('Profile updated successfully!');
+                closeProfileModal();
+                updateSessionUI();
+            } catch(e) {
+                console.error('Error saving profile:', e);
+                showToast('Profile saved locally (sync failed)');
+                closeProfileModal();
+            }
+        };
+    </script>
+</body>
+
+</html>
