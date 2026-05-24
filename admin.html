@@ -194,10 +194,10 @@
     </div>
     <div class="flex items-center gap-3">
       <div class="text-right hidden sm:block">
-        <p class="text-sm text-amber-400 font-medium">Randy Rosero</p>
+        <p class="text-sm text-amber-400 font-medium" id="owner-panel-name">Randy Rosero</p>
         <p class="text-xs text-zinc-500">Owner</p>
       </div>
-      <div class="w-10 h-10 rounded-full bg-amber-600 flex items-center justify-center font-bold text-black accent-font">RR</div>
+      <div class="w-10 h-10 rounded-full bg-amber-600 flex items-center justify-center font-bold text-black accent-font" id="owner-panel-avatar">RR</div>
       <button onclick="closeOwnerPanel()" class="ml-2 px-4 py-2 rounded-lg border border-red-500/30 text-red-400 text-xs font-bold uppercase hover:bg-red-500/10 transition-colors flex items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         Exit Owner View
@@ -529,14 +529,17 @@
 
           <!-- Staff selector -->
           <div class="space-y-4">
-            <div>
-              <label class="block text-xs font-bold uppercase text-zinc-500 mb-2 tracking-wider">Staff Member</label>
-              <select id="timein-staff" class="w-full bg-black border border-white/10 p-3 rounded-lg text-white focus:border-amber-500 outline-none transition-colors">
-                <option value="Chef Buster">Chef Buster</option>
-                <option value="Sous Chef John">Sous Chef John</option>
-                <option value="Manager Maria">Manager Maria</option>
-                <option value="Server Alex">Server Alex</option>
-              </select>
+            <div class="bg-black/40 border border-white/5 rounded-xl p-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center font-bold text-sm border border-amber-500/20" id="timein-user-avatar">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <div>
+                  <p class="text-white text-sm font-medium" id="timein-user-name">Loading...</p>
+                  <p class="text-zinc-500 text-xs" id="timein-user-role">Loading...</p>
+                </div>
+                <span class="ml-auto text-[10px] bg-amber-500/10 text-amber-400 px-2 py-1 rounded border border-amber-500/20 font-bold uppercase">You</span>
+              </div>
             </div>
 
             <!-- Locked: auto-time display -->
@@ -1083,14 +1086,17 @@
     <h3 class="text-2xl font-bold mb-2 accent-font tracking-wider">Log Time & Activity</h3>
     <p class="text-zinc-500 text-xs mb-6">Time is automatically recorded by the system.</p>
     <form onsubmit="handleAddActivity(event)" class="space-y-4">
-      <div>
-        <label class="block text-xs font-bold uppercase text-zinc-500 mb-1.5 tracking-wider">Staff Member</label>
-        <select required name="staff" class="w-full bg-black border border-white/10 p-3 rounded-lg text-white focus:border-amber-500 outline-none transition-colors">
-          <option value="Chef Buster">Chef Buster</option>
-          <option value="Sous Chef John">Sous Chef John</option>
-          <option value="Manager Maria">Manager Maria</option>
-          <option value="Server Alex">Server Alex</option>
-        </select>
+      <div class="bg-black/40 border border-white/5 rounded-xl p-4 mb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center font-bold text-sm border border-amber-500/20">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div>
+            <p class="text-white text-sm font-medium" id="activity-user-name">Loading...</p>
+            <p class="text-zinc-500 text-xs">Logging activity as yourself</p>
+          </div>
+          <input type="hidden" name="staff" id="activity-staff-hidden" value="">
+        </div>
       </div>
       <div>
         <label class="block text-xs font-bold uppercase text-zinc-500 mb-1.5 tracking-wider">Location</label>
@@ -1158,29 +1164,69 @@
   // AUTH GATE: hide page until Firebase confirms session, then check role
   document.body.style.visibility = 'hidden';
 
-  onAuthStateChanged(auth, (user) => {
-    const adminEmails = ['chefbustercuisine@gmail.com'];
+  onAuthStateChanged(auth, async (user) => {
     const storedRole  = localStorage.getItem('userRole');
     const storedToken = localStorage.getItem('userToken');
+    const storedName  = localStorage.getItem('userName');
 
-    let isAdmin = false;
-    if (user) {
-      isAdmin = adminEmails.includes(user.email) || storedRole === 'admin';
-    } else {
-      isAdmin = !!(storedToken && storedRole === 'admin');
-    }
-
-    if (isAdmin) {
-      document.body.style.visibility = 'visible';
-      // Wait for _fb to be ready before starting listeners
-      window._fbReady.then(() => {
-        if (typeof window._startFirestoreListeners === 'function') {
-          window._startFirestoreListeners();
-        }
-      });
-    } else {
+    if (!user && !storedToken) {
       window.location.href = 'index.html';
+      return;
     }
+
+    // Fetch user profile from Firestore to get display name and role
+    let userRole = storedRole || 'staff';
+    let userName = storedName || (user ? user.displayName || user.email.split('@')[0] : 'User');
+    let userEmail = user ? user.email : '';
+
+    if (user && window._fb) {
+      try {
+        const { db, doc, getDoc } = window._fb;
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          userName = data.name || userName;
+          userRole = data.role || userRole;
+          localStorage.setItem('userName', userName);
+          localStorage.setItem('userRole', userRole);
+          localStorage.setItem('userEmail', userEmail);
+        }
+      } catch(e) { console.warn('Could not fetch user profile:', e); }
+    }
+
+    // Store current user info globally
+    window._currentUser = {
+      uid: user ? user.uid : localStorage.getItem('userToken'),
+      name: userName,
+      email: userEmail,
+      role: userRole
+    };
+
+    document.body.style.visibility = 'visible';
+    // Update header with actual user name
+    const headerNameEl = document.querySelector('header .text-right.hidden.sm\:block p:first-child');
+    const headerRoleEl = document.querySelector('header .text-right.hidden.sm\:block p:last-child');
+    const avatarImg = document.querySelector('header img[alt="Admin"]');
+    if (headerNameEl) headerNameEl.textContent = userName;
+    if (headerRoleEl) headerRoleEl.textContent = userRole.charAt(0).toUpperCase() + userRole.slice(1);
+    if (avatarImg) avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=ea580c&color=fff`;
+
+    // Show/hide owner view button based on role
+    const ownerBtn = document.querySelector('header button[onclick="openPwModal()"]');
+    if (ownerBtn) {
+      if (userRole === 'owner') {
+        ownerBtn.style.display = 'flex';
+      } else {
+        ownerBtn.style.display = 'none';
+      }
+    }
+
+    // Wait for _fb to be ready before starting listeners
+    window._fbReady.then(() => {
+      if (typeof window._startFirestoreListeners === 'function') {
+        window._startFirestoreListeners();
+      }
+    });
   });
 
   // Start Firestore listeners - called after auth gate confirms admin
@@ -1333,6 +1379,21 @@ function toggleSidebar() {
 function openModal(id) {
   document.getElementById(id).classList.remove('hidden');
   if(id==='add-slot-modal') document.getElementById('new-slot-date').value = new Date().toISOString().split('T')[0];
+
+  // Populate current user info in modals
+  if (window._currentUser) {
+    const timeinNameEl = document.getElementById('timein-user-name');
+    const timeinRoleEl = document.getElementById('timein-user-role');
+    const timeinAvatarEl = document.getElementById('timein-user-avatar');
+    if (timeinNameEl) timeinNameEl.textContent = window._currentUser.name;
+    if (timeinRoleEl) timeinRoleEl.textContent = window._currentUser.role.charAt(0).toUpperCase() + window._currentUser.role.slice(1);
+    if (timeinAvatarEl) timeinAvatarEl.innerHTML = window._currentUser.name.charAt(0).toUpperCase();
+
+    const activityNameEl = document.getElementById('activity-user-name');
+    const activityHiddenEl = document.getElementById('activity-staff-hidden');
+    if (activityNameEl) activityNameEl.textContent = window._currentUser.name;
+    if (activityHiddenEl) activityHiddenEl.value = window._currentUser.name;
+  }
 }
 
 function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
@@ -1382,8 +1443,18 @@ function checkPassword() {
 function openOwnerPanel() {
   document.getElementById('owner-panel').style.display = 'flex';
   document.getElementById('owner-panel').style.flexDirection = 'column';
+
+  // Update owner panel header with current user
+  const ownerNameEl = document.getElementById('owner-panel-name');
+  const ownerAvatarEl = document.getElementById('owner-panel-avatar');
+  if (window._currentUser) {
+    if (ownerNameEl) ownerNameEl.textContent = window._currentUser.name;
+    if (ownerAvatarEl) ownerAvatarEl.textContent = window._currentUser.name.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase();
+  }
+
   renderOwnerData();
-  showToast('Welcome, Randy! Owner view unlocked.', 'success');
+  const welcomeName = window._currentUser ? window._currentUser.name : 'Randy';
+  showToast(`Welcome, ${welcomeName}! Owner view unlocked.`, 'success');
 }
 
 function closeOwnerPanel() {
@@ -1620,13 +1691,16 @@ function renderMenu() {
 function renderStaffActivity() {
   const list = document.getElementById('activity-logs-list');
   if(!list) return;
+  const currentUserName = window._currentUser ? window._currentUser.name : '';
   const fmt = iso => { const d=new Date(iso); return `${d.toLocaleDateString()} at ${formatTime12(d.toTimeString().slice(0,5))}`; };
-  list.innerHTML = db_local.activity.map(log=>`
-    <div class="p-6 flex flex-col md:flex-row gap-6 hover:bg-white/[0.02] transition-colors">
-      <div class="shrink-0 w-12 h-12 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center font-bold text-lg border border-amber-500/20">${log.staff.charAt(0)}</div>
+  list.innerHTML = db_local.activity.map(log=>{
+    const isCurrentUser = log.staff === currentUserName;
+    return `
+    <div class="p-6 flex flex-col md:flex-row gap-6 hover:bg-white/[0.02] transition-colors ${isCurrentUser ? 'bg-amber-500/[0.02] border-l-2 border-amber-500/30' : ''}">
+      <div class="shrink-0 w-12 h-12 ${isCurrentUser ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'} rounded-full flex items-center justify-center font-bold text-lg border">${log.staff.charAt(0)}</div>
       <div class="flex-1">
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2">
-          <h4 class="text-white font-medium text-base">${log.staff}</h4>
+          <h4 class="text-white font-medium text-base">${log.staff} ${isCurrentUser ? '<span class="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded border border-amber-500/20 ml-2">You</span>' : ''}</h4>
           <div class="flex items-center gap-2 mt-1 sm:mt-0">
             <span class="text-[10px] bg-zinc-800 text-zinc-300 px-2 py-1 rounded font-mono uppercase tracking-widest flex items-center gap-1">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -1680,19 +1754,22 @@ function renderTimeInRecords() {
     list.innerHTML = `<div class="p-6 text-center text-zinc-600 italic text-sm">No clock-in records for today yet.</div>`;
     return;
   }
-  list.innerHTML = db_local.timeins.map(entry=>`
-    <div class="p-4 flex items-start gap-3 hover:bg-white/[0.02] transition-colors">
+  const currentUserName = window._currentUser ? window._currentUser.name : '';
+  list.innerHTML = db_local.timeins.map(entry=>{
+    const isCurrentUser = entry.staff === currentUserName;
+    return `
+    <div class="p-4 flex items-start gap-3 hover:bg-white/[0.02] transition-colors ${isCurrentUser ? 'bg-amber-500/[0.03]' : ''}">
       <div class="mt-0.5">
-        <div class="w-8 h-8 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center font-bold text-sm border border-amber-500/20">${entry.staff.charAt(0)}</div>
+        <div class="w-8 h-8 rounded-full ${isCurrentUser ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'} flex items-center justify-center font-bold text-sm border">${entry.staff.charAt(0)}</div>
       </div>
       <div class="flex-1 min-w-0">
         <div class="flex justify-between items-start gap-2">
-          <p class="text-white text-sm font-medium">${entry.staff}</p>
+          <p class="text-white text-sm font-medium">${entry.staff} ${isCurrentUser ? '<span class="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded border border-amber-500/20 ml-2">You</span>' : ''}</p>
           <span class="text-[9px] bg-red-500/10 text-red-400 px-2 py-0.5 rounded border border-red-500/20 font-bold uppercase shrink-0 flex items-center gap-1">
             <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             Locked
           </span>
-        </div>
+        </div>`
         <p class="text-amber-400 font-mono text-xs mt-0.5 font-bold">${entry.timeStr}</p>
         <p class="text-zinc-500 text-xs mt-0.5">${entry.dateStr}</p>
         <div class="mt-1.5">
@@ -1723,7 +1800,8 @@ function getDistanceMeters(lat1, lng1, lat2, lng2) {
 }
 
 function doTimeIn() {
-  const staff = document.getElementById('timein-staff').value;
+  const staff = window._currentUser ? window._currentUser.name : 'Unknown User';
+  const staffUid = window._currentUser ? window._currentUser.uid : null;
   const btn = document.getElementById('timein-btn');
   const gpsStatus = document.getElementById('gps-status');
 
@@ -1747,7 +1825,9 @@ function doTimeIn() {
     gpsStatus.classList.add('text-red-300');
 
     const timeinData = {
-      staff, timeStr, dateStr,
+      staff, 
+      staffUid: staffUid,
+      timeStr, dateStr,
       location: locationStr,
       lat: lat || null, lng: lng || null,
       timestamp: now.toISOString(),
@@ -2107,8 +2187,10 @@ async function handleAddActivity(e) {
   if(btn) { btn.disabled = true; btn.textContent = 'Submitting...'; }
   const f = new FormData(e.target);
   const photoInput = document.getElementById('activity-photo');
+  const currentStaffName = window._currentUser ? window._currentUser.name : 'Unknown';
+  const currentStaffUid = window._currentUser ? window._currentUser.uid : null;
   const save = async (photoData) => {
-    const actData = { staff:f.get('staff'), location:f.get('location'), desc:f.get('desc'), photo:photoData, timestamp:new Date().toISOString() };
+    const actData = { staff: currentStaffName, staffUid: currentStaffUid, location:f.get('location'), desc:f.get('desc'), photo:photoData, timestamp:new Date().toISOString() };
     if(window._fb) {
       const { db, collection, addDoc, serverTimestamp } = window._fb;
       await addDoc(collection(db, 'activity'), { ...actData, createdAt: serverTimestamp() });
