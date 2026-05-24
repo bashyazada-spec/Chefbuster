@@ -1,0 +1,2634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard | Chef Buster</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #09090b;
+    --bg-card: #111113;
+    --accent-gold: #ea580c;
+  }
+  body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: #e4e4e7; }
+  .accent-font { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #050505; }
+  ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #ea580c; }
+  .nav-link.active { background-color: rgba(234,88,12,0.1); color: #f59e0b; border-right: 3px solid #f59e0b; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  .modal-enter { animation: modalIn 0.3s cubic-bezier(0.16,1,0.3,1); }
+  @keyframes modalIn { from { opacity:0; transform:scale(0.95) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
+  #toast-container { pointer-events: none; }
+  .toast { animation: toastSlide 0.4s cubic-bezier(0.16,1,0.3,1) forwards; }
+  @keyframes toastSlide { from { opacity:0; transform:translateX(100%); } to { opacity:1; transform:translateX(0); } }
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+  .time-chip.active { background-color: var(--accent-gold); color: white; border-color: var(--accent-gold); }
+
+  /* Menu Status Badges */
+  .badge-available { background: rgba(16,185,129,0.1); color: #34d399; border: 1px solid rgba(16,185,129,0.2); }
+  .badge-unavailable { background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+  .badge-new {
+    background: linear-gradient(135deg, rgba(251,191,36,0.2), rgba(234,88,12,0.2));
+    color: #fbbf24;
+    border: 1px solid rgba(251,191,36,0.4);
+    box-shadow: 0 0 12px rgba(251,191,36,0.15);
+    animation: goldPulse 2s ease-in-out infinite;
+  }
+  @keyframes goldPulse {
+    0%, 100% { box-shadow: 0 0 8px rgba(251,191,36,0.15); }
+    50% { box-shadow: 0 0 18px rgba(251,191,36,0.35); }
+  }
+  .menu-card-new { border-color: rgba(251,191,36,0.25) !important; }
+
+  /* Time-In locked styles */
+  .timein-locked { background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.15); }
+  .timein-locked input, .timein-locked textarea { pointer-events: none; cursor: not-allowed; opacity: 0.6; }
+
+  /* Owner View */
+  #owner-panel { display: none; }
+  #owner-panel.active { display: flex; }
+
+  /* Password modal */
+  .pw-input { letter-spacing: 0.3em; }
+
+  /* Owner stat cards glow */
+  .owner-stat { position: relative; overflow: hidden; }
+  .owner-stat::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, rgba(251,191,36,0.06), transparent 70%);
+    pointer-events: none;
+  }
+
+  /* Activity log timeline */
+  .timeline-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .timeline-line { width: 1px; background: rgba(255,255,255,0.08); flex: 1; min-height: 24px; margin: 2px auto; }
+
+  /* Toggle switch */
+  .toggle-wrap { display: flex; gap: 4px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 3px; }
+  .toggle-btn { padding: 4px 10px; border-radius: 5px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; transition: all 0.2s; color: #71717a; }
+  .toggle-btn.active-available { background: rgba(16,185,129,0.15); color: #34d399; }
+  .toggle-btn.active-unavailable { background: rgba(239,68,68,0.15); color: #f87171; }
+  .toggle-btn.active-new { background: linear-gradient(135deg, rgba(251,191,36,0.2), rgba(234,88,12,0.15)); color: #fbbf24; }
+
+  /* ── REPORT PRINT AREA (on-screen preview) ────────────────────────── */
+  #report-print-area {
+    background: #fff;
+    color: #111;
+    font-family: Georgia, 'Times New Roman', serif;
+    padding: 32px 40px;
+    border-radius: 12px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  #report-print-area h1, #report-print-area h2, #report-print-area h3 {
+    font-family: Georgia, serif;
+  }
+  .rpt-header {
+    background: #1a1a1a;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 28px;
+    border-radius: 8px;
+    margin-bottom: 28px;
+  }
+  .rpt-header .logo { font-size: 22px; font-weight: 700; color: #f59e0b; letter-spacing: 0.08em; font-family: Georgia, serif; }
+  .rpt-header .meta { text-align: right; font-size: 11px; color: #aaa; line-height: 1.6; }
+  .rpt-section { margin-bottom: 32px; }
+  .rpt-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #555;
+    border-bottom: 2px solid #e5e5e5;
+    padding-bottom: 6px;
+    margin-bottom: 16px;
+  }
+  .rpt-stats { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+  .rpt-stat-box { flex: 1; min-width: 110px; border: 1px solid #e5e5e5; border-radius: 8px; padding: 14px 16px; text-align: center; }
+  .rpt-stat-box .val { font-size: 26px; font-weight: 700; color: #111; }
+  .rpt-stat-box .lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin-top: 2px; }
+  .rpt-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .rpt-table th { background: #f5f5f5; text-align: left; padding: 8px 10px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em; color: #666; border-bottom: 2px solid #e5e5e5; }
+  .rpt-table td { padding: 8px 10px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+  .rpt-badge-completed { background: #d1fae5; color: #065f46; border-radius: 4px; padding: 2px 8px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+  .rpt-badge-upcoming  { background: #fef3c7; color: #92400e; border-radius: 4px; padding: 2px 8px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+  .rpt-rev-bar-track { background: #f0f0f0; border-radius: 4px; height: 10px; flex: 1; overflow: hidden; }
+  .rpt-rev-bar-fill  { background: linear-gradient(90deg, #b45309, #f59e0b); height: 100%; border-radius: 4px; }
+  .rpt-cal { width: 100%; border-collapse: collapse; }
+  .rpt-cal th { background: #1a1a1a; color: #f59e0b; text-align: center; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; padding: 7px 0; }
+  .rpt-cal td { border: 1px solid #e5e5e5; width: 14.28%; min-height: 60px; vertical-align: top; padding: 6px 5px; }
+  .rpt-cal .day-num { font-size: 11px; font-weight: 700; color: #555; margin-bottom: 4px; }
+  .rpt-cal .today-cell { background: #fffbeb; }
+  .rpt-cal .other-month { background: #fafafa; }
+  .rpt-avatar { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; font-size: 9px; font-weight: 700; color: #fff; margin: 1px; }
+  .rpt-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+  .rpt-legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #333; }
+  .rpt-footer { display: flex; justify-content: space-between; font-size: 10px; color: #aaa; border-top: 1px solid #e5e5e5; padding-top: 12px; margin-top: 8px; }
+  .rpt-total-row td { font-weight: 700; background: #f9f9f9; border-top: 2px solid #ddd; }
+
+  /* ── PRINT MEDIA ─────────────────────────────────────────────────── */
+  @media print {
+    body * { visibility: hidden; }
+    #report-print-area, #report-print-area * { visibility: visible; }
+    #report-print-area { position: absolute; top: 0; left: 0; width: 100%; border-radius: 0; padding: 24px 32px; }
+  }
+</style>
+</head>
+<body class="flex h-screen overflow-hidden antialiased">
+
+<!-- Toast -->
+<div id="toast-container" class="fixed top-6 right-6 z-[100] flex flex-col gap-3"></div>
+
+<!-- PASSWORD MODAL -->
+<div id="pw-modal" class="fixed inset-0 z-[200] flex items-center justify-center p-4 hidden">
+  <div class="absolute inset-0 bg-black/95 backdrop-blur-sm" onclick="closePwModal()"></div>
+  <div class="bg-[#111113] border border-amber-500/20 p-8 rounded-2xl w-full max-w-sm relative modal-enter shadow-2xl shadow-amber-900/20">
+    <div class="flex flex-col items-center mb-6">
+      <div class="w-14 h-14 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-3">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h3 class="text-xl font-bold accent-font tracking-wider text-white">Owner Access</h3>
+      <p class="text-zinc-500 text-xs mt-1">Enter your owner password to continue</p>
+    </div>
+    <div class="space-y-4">
+      <div class="relative">
+        <input type="password" id="pw-input" placeholder="••••••••••••"
+          class="pw-input w-full bg-black border border-white/10 p-4 rounded-xl text-white focus:border-amber-500 outline-none transition-all text-center text-lg"
+          onkeydown="if(event.key==='Enter') checkPassword()">
+        <button onclick="togglePwVisibility()" class="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors">
+          <svg id="pw-eye" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+      <p id="pw-error" class="text-red-400 text-xs text-center hidden">Incorrect password. Please try again.</p>
+      <div class="flex gap-3 pt-2">
+        <button onclick="closePwModal()" class="flex-1 px-4 py-3 rounded-xl border border-white/10 text-sm font-semibold hover:bg-white/5 transition-colors">Cancel</button>
+        <button onclick="checkPassword()" class="flex-1 px-4 py-3 rounded-xl bg-amber-600 text-white text-sm font-bold uppercase tracking-widest hover:bg-amber-500 transition-colors">Unlock</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OWNER VIEW OVERLAY -->
+<div id="owner-panel" class="fixed inset-0 z-[150] bg-[#050505] flex-col h-screen overflow-hidden">
+  <!-- Owner Header -->
+  <header class="h-20 bg-[#0a0a0c] border-b border-amber-500/20 flex items-center justify-between px-6 shrink-0">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded bg-amber-600 flex items-center justify-center text-black font-bold accent-font">CB</div>
+      <div>
+        <span class="font-bold tracking-wider accent-font text-amber-400 text-lg">OWNER DASHBOARD</span>
+        <p class="text-zinc-600 text-xs">Full Access Mode</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="text-right hidden sm:block">
+        <p class="text-sm text-amber-400 font-medium">Randy Rosero</p>
+        <p class="text-xs text-zinc-500">Owner</p>
+      </div>
+      <div class="w-10 h-10 rounded-full bg-amber-600 flex items-center justify-center font-bold text-black accent-font">RR</div>
+      <button onclick="closeOwnerPanel()" class="ml-2 px-4 py-2 rounded-lg border border-red-500/30 text-red-400 text-xs font-bold uppercase hover:bg-red-500/10 transition-colors flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Exit Owner View
+      </button>
+    </div>
+  </header>
+
+  <!-- Owner Content -->
+  <div class="flex-1 overflow-y-auto p-6 md:p-8 space-y-8">
+
+    <!-- Owner Stats -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="owner-stat bg-[#111113] p-5 rounded-xl border border-white/5">
+        <p class="text-zinc-500 text-xs font-bold tracking-widest uppercase mb-2">Total Revenue</p>
+        <h3 class="text-3xl text-amber-400 accent-font">₱48,250</h3>
+        <p class="text-green-500 text-xs mt-1">↑ 12% this month</p>
+      </div>
+      <div class="owner-stat bg-[#111113] p-5 rounded-xl border border-white/5">
+        <p class="text-zinc-500 text-xs font-bold tracking-widest uppercase mb-2">Total Bookings</p>
+        <h3 class="text-3xl text-white accent-font">127</h3>
+        <p class="text-zinc-500 text-xs mt-1">Since Jan 2026</p>
+      </div>
+      <div class="owner-stat bg-[#111113] p-5 rounded-xl border border-white/5">
+        <p class="text-zinc-500 text-xs font-bold tracking-widest uppercase mb-2">Active Staff</p>
+        <h3 class="text-3xl text-white accent-font">4</h3>
+        <p class="text-zinc-500 text-xs mt-1">On duty today</p>
+      </div>
+      <div class="owner-stat bg-[#111113] p-5 rounded-xl border border-white/5">
+        <p class="text-zinc-500 text-xs font-bold tracking-widest uppercase mb-2">Avg. Rating</p>
+        <h3 class="text-3xl text-amber-400 accent-font">4.8<span class="text-base text-zinc-500">/5</span></h3>
+        <p class="text-zinc-500 text-xs mt-1">From 89 reviews</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <!-- Full Staff Logs -->
+      <div class="bg-[#111113] border border-white/5 rounded-xl overflow-hidden">
+        <div class="p-5 border-b border-white/5 flex justify-between items-center">
+          <h3 class="text-base accent-font text-white">Staff Time Logs — Full History</h3>
+          <span class="text-xs bg-amber-500/10 text-amber-400 px-3 py-1 rounded-full border border-amber-500/20 font-medium">Live</span>
+        </div>
+        <div class="divide-y divide-white/5 max-h-[400px] overflow-y-auto" id="owner-staff-logs"></div>
+      </div>
+
+      <!-- Revenue Breakdown -->
+      <div class="bg-[#111113] border border-white/5 rounded-xl overflow-hidden">
+        <div class="p-5 border-b border-white/5">
+          <h3 class="text-base accent-font text-white">Revenue Breakdown</h3>
+        </div>
+        <div class="p-5 space-y-4" id="owner-revenue"></div>
+      </div>
+    </div>
+
+    <!-- Full Booking History -->
+    <div class="bg-[#111113] border border-white/5 rounded-xl overflow-hidden">
+      <div class="p-5 border-b border-white/5">
+        <h3 class="text-base accent-font text-white">Complete Booking History</h3>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm whitespace-nowrap">
+          <thead class="bg-[#050505] text-zinc-500 text-xs uppercase tracking-widest">
+            <tr>
+              <th class="px-5 py-3 font-medium">Guest</th>
+              <th class="px-5 py-3 font-medium">Date & Time</th>
+              <th class="px-5 py-3 font-medium">Pax</th>
+              <th class="px-5 py-3 font-medium">Amount</th>
+              <th class="px-5 py-3 font-medium">Status</th>
+              <th class="px-5 py-3 font-medium">Contact</th>
+            </tr>
+          </thead>
+          <tbody id="owner-bookings" class="divide-y divide-white/5 text-zinc-300"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Customer Feedback (Full) -->
+    <div class="bg-[#111113] border border-white/5 rounded-xl overflow-hidden">
+      <div class="p-5 border-b border-white/5">
+        <h3 class="text-base accent-font text-white">All Customer Feedback</h3>
+      </div>
+      <div class="divide-y divide-white/5" id="owner-feedback"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- STAFF VIEW -->
+<aside class="w-64 bg-[#050505] border-r border-white/10 flex flex-col shrink-0 transition-transform duration-300 z-50 absolute md:relative h-full transform -translate-x-full md:translate-x-0" id="sidebar">
+  <div class="h-20 flex items-center px-6 border-b border-white/10 justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded bg-amber-600 flex items-center justify-center text-black font-bold accent-font">CB</div>
+      <span class="font-bold tracking-wider accent-font text-lg">ADMIN</span>
+    </div>
+    <button class="md:hidden text-zinc-400 hover:text-white" onclick="toggleSidebar()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <nav class="flex-1 overflow-y-auto py-6 flex flex-col gap-1">
+    <button onclick="switchTab('dashboard')" class="nav-link active flex items-center gap-3 px-6 py-3 text-sm font-medium text-zinc-400 hover:text-white transition-colors text-left w-full" data-target="dashboard">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+      Dashboard
+    </button>
+    <button onclick="switchTab('slots')" class="nav-link flex items-center gap-3 px-6 py-3 text-sm font-medium text-zinc-400 hover:text-white transition-colors text-left w-full" data-target="slots">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Slot Manager
+    </button>
+    <button onclick="switchTab('menu-manager')" class="nav-link flex items-center gap-3 px-6 py-3 text-sm font-medium text-zinc-400 hover:text-white transition-colors text-left w-full" data-target="menu-manager">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 21H4a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h5l2 4h8a2 2 0 0 1 2 2v2"/><polyline points="19 15 22 18 19 21"/><line x1="22" y1="18" x2="12" y2="18"/></svg>
+      Menu Manager
+    </button>
+    <button onclick="switchTab('staff-activity')" class="nav-link flex items-center gap-3 px-6 py-3 text-sm font-medium text-zinc-400 hover:text-white transition-colors text-left w-full" data-target="staff-activity">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Staff Logs
+    </button>
+    <!-- NEW: Time In Section -->
+    <button onclick="switchTab('timein')" class="nav-link flex items-center gap-3 px-6 py-3 text-sm font-medium text-zinc-400 hover:text-white transition-colors text-left w-full" data-target="timein">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/><path d="M5 12H3"/></svg>
+      Time In
+    </button>
+    <button onclick="switchTab('feedback')" class="nav-link flex items-center gap-3 px-6 py-3 text-sm font-medium text-zinc-400 hover:text-white transition-colors text-left w-full" data-target="feedback">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Feedback
+    </button>
+    <button onclick="switchTab('reports')" class="nav-link flex items-center gap-3 px-6 py-3 text-sm font-medium text-zinc-400 hover:text-white transition-colors text-left w-full" data-target="reports">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Reports
+    </button>
+    <button onclick="switchTab('dev-tasks')" class="nav-link flex items-center gap-3 px-6 py-3 text-sm font-medium text-zinc-400 hover:text-white transition-colors text-left w-full" data-target="dev-tasks">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      Dev Tasks
+    </button>
+    <button onclick="switchTab('settings')" class="nav-link flex items-center gap-3 px-6 py-3 text-sm font-medium text-zinc-400 hover:text-white transition-colors text-left w-full" data-target="settings">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24"/></svg>
+      Settings
+    </button>
+  </nav>
+  <div class="p-6 border-t border-white/10 flex flex-col gap-3">
+    <button onclick="adminLogout()" class="flex items-center gap-3 text-sm font-medium text-red-500 hover:text-red-400 transition-colors w-full text-left">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Logout
+    </button>
+    <button onclick="window.location.href='index.html'" class="flex items-center gap-3 text-sm font-medium text-zinc-500 hover:text-zinc-300 transition-colors w-full text-left">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to main website
+    </button>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="flex-1 flex flex-col h-full relative overflow-hidden">
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/80 z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
+
+  <header class="h-20 bg-[#0a0a0c] border-b border-white/10 flex items-center justify-between px-6 shrink-0">
+    <div class="flex items-center gap-4">
+      <button class="md:hidden text-zinc-400 hover:text-white" onclick="toggleSidebar()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <h2 id="page-title" class="text-xl accent-font tracking-widest text-white hidden sm:block">Dashboard</h2>
+    </div>
+    <div class="flex items-center gap-4">
+      <!-- OWNER VIEW BUTTON -->
+      <button onclick="openPwModal()" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500/10 border border-amber-500/25 text-amber-400 text-xs font-bold uppercase tracking-wider hover:bg-amber-500/20 transition-all hover:border-amber-500/50 group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:rotate-12 transition-transform"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Owner View
+      </button>
+      <div class="relative cursor-pointer hover:bg-white/5 p-2 rounded-full transition-colors group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-zinc-400 group-hover:text-amber-500"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="absolute top-1 right-2 w-2 h-2 bg-amber-500 rounded-full animate-ping"></span>
+        <span class="absolute top-1 right-2 w-2 h-2 bg-amber-500 rounded-full"></span>
+      </div>
+      <div class="flex items-center gap-3 border-l border-white/10 pl-4">
+        <div class="text-right hidden sm:block">
+          <p class="text-sm text-white font-medium">Head Chef</p>
+          <p class="text-xs text-zinc-500">Super Admin</p>
+        </div>
+        <img src="https://ui-avatars.com/api/?name=Admin&background=ea580c&color=fff" alt="Admin" class="w-10 h-10 rounded-full border border-white/20">
+      </div>
+    </div>
+  </header>
+
+  <div id="scroll-area" class="flex-1 overflow-y-auto p-4 md:p-8">
+
+    <!-- DASHBOARD TAB -->
+    <div id="dashboard" class="tab-content active space-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <div class="bg-[#111113] p-6 rounded-xl border border-white/5 shadow-lg relative overflow-hidden group">
+          <div class="absolute -right-6 -top-6 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all"></div>
+          <p class="text-zinc-500 text-xs font-bold tracking-widest uppercase mb-2">Total Slots</p>
+          <h3 class="text-4xl text-white accent-font" id="stat-slots">0</h3>
+          <p class="text-zinc-500 text-xs mt-2">Available inventory</p>
+        </div>
+        <div class="bg-[#111113] p-6 rounded-xl border border-white/5 shadow-lg relative overflow-hidden group">
+          <div class="absolute -right-6 -top-6 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all"></div>
+          <p class="text-zinc-500 text-xs font-bold tracking-widest uppercase mb-2">Booked Slots</p>
+          <h3 class="text-4xl text-white accent-font" id="stat-booked">0</h3>
+          <p class="text-green-500 text-xs mt-2">Claimed by users</p>
+        </div>
+        <div class="bg-[#111113] p-6 rounded-xl border border-white/5 shadow-lg relative overflow-hidden group">
+          <div class="absolute -right-6 -top-6 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
+          <p class="text-zinc-500 text-xs font-bold tracking-widest uppercase mb-2">Open Slots</p>
+          <h3 class="text-4xl text-white accent-font" id="stat-open">0</h3>
+          <p class="text-emerald-500 text-xs mt-2">Ready for booking</p>
+        </div>
+        <div class="bg-[#111113] p-6 rounded-xl border border-white/5 shadow-lg relative overflow-hidden group">
+          <div class="absolute -right-6 -top-6 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all"></div>
+          <p class="text-zinc-500 text-xs font-bold tracking-widest uppercase mb-2">New Feedback</p>
+          <h3 class="text-4xl text-white accent-font" id="stat-feedback-count">2</h3>
+          <p class="text-zinc-400 text-xs mt-2">Review now</p>
+        </div>
+      </div>
+      <!-- CHARTS ROW -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-[#111113] border border-white/5 rounded-xl shadow-lg p-6">
+          <h3 class="text-sm font-bold tracking-widest uppercase text-zinc-500 mb-4">Reservations (Last 7 Days)</h3>
+          <div style="position:relative;height:220px;">
+            <canvas id="chart-reservations"></canvas>
+          </div>
+        </div>
+        <div class="bg-[#111113] border border-white/5 rounded-xl shadow-lg p-6">
+          <h3 class="text-sm font-bold tracking-widest uppercase text-zinc-500 mb-4">Menu by Category</h3>
+          <div style="position:relative;height:220px;">
+            <canvas id="chart-menu"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-[#111113] border border-white/5 rounded-xl shadow-lg p-6">
+        <h3 class="text-lg accent-font text-white mb-6">Recent Bookings</h3>
+        <div class="space-y-4" id="activity-feed"></div>
+      </div>
+    </div>
+
+    <!-- SLOT MANAGER TAB -->
+    <div id="slots" class="tab-content">
+      <div class="bg-[#111113] border border-white/5 rounded-xl shadow-lg overflow-hidden">
+        <div class="p-6 border-b border-white/5 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+          <h3 class="text-lg accent-font text-white">Availability Management</h3>
+          <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+            <div class="flex gap-2">
+              <input type="date" id="slot-filter-date" class="bg-black border border-white/10 text-sm text-zinc-300 px-3 py-2 rounded focus:outline-none focus:border-amber-500 w-full sm:w-auto" style="color-scheme:dark;">
+              <button onclick="applySlotFilter()" class="bg-amber-600/10 text-amber-500 border border-amber-500/20 px-4 py-2 text-xs font-bold uppercase rounded hover:bg-amber-600/20 transition-colors">Filter</button>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="openModal('add-slot-modal')" class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold uppercase tracking-widest px-6 py-2.5 rounded transition-colors shadow-lg shadow-amber-600/20 flex items-center justify-center gap-2 whitespace-nowrap">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Create Slot
+              </button>
+              <button onclick="openModal('bulk-slot-modal')" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-bold uppercase tracking-widest px-4 py-2.5 rounded transition-colors border border-white/10 flex items-center justify-center gap-2 whitespace-nowrap">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                Bulk Create
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm whitespace-nowrap">
+            <thead class="bg-[#050505] text-zinc-500 text-xs uppercase tracking-widest">
+              <tr>
+                <th class="px-6 py-4 font-medium">Slot ID</th>
+                <th class="px-6 py-4 font-medium">Date & Time</th>
+                <th class="px-6 py-4 font-medium text-center">Capacity</th>
+                <th class="px-6 py-4 font-medium text-center">Booked</th>
+                <th class="px-6 py-4 font-medium">Status</th>
+                <th class="px-6 py-4 font-medium">Guest Details</th>
+                <th class="px-6 py-4 font-medium text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="slot-table-body" class="divide-y divide-white/5 text-zinc-300"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- MENU MANAGER TAB -->
+    <div id="menu-manager" class="tab-content">
+      <div class="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div class="flex gap-2 bg-[#111113] p-1 rounded-lg border border-white/5 overflow-x-auto max-w-full">
+          <button onclick="filterMenu('all')" class="menu-filter active px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-md bg-white/5 text-white">All Items</button>
+          <button onclick="filterMenu('chicken')" class="menu-filter px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-md text-zinc-500 hover:text-white">🍗 Chicken</button>
+          <button onclick="filterMenu('pork')" class="menu-filter px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-md text-zinc-500 hover:text-white">🥩 Pork</button>
+          <button onclick="filterMenu('lechon')" class="menu-filter px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-md text-zinc-500 hover:text-white">🐷 Lechon</button>
+          <button onclick="filterMenu('bulaklak')" class="menu-filter px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-md text-zinc-500 hover:text-white">🍖 Bulaklak</button>
+          <button onclick="filterMenu('pasta')" class="menu-filter px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-md text-zinc-500 hover:text-white">🍝 Pasta</button>
+          <button onclick="filterMenu('drinks')" class="menu-filter px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-md text-zinc-500 hover:text-white">🥤 Drinks</button>
+          <button onclick="filterMenu('sides')" class="menu-filter px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-md text-zinc-500 hover:text-white">🥗 Sides</button>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="openModal('add-item-modal')" class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold uppercase tracking-widest px-6 py-3 rounded transition-colors shadow-lg shadow-amber-600/20 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Dish
+          </button>
+          <button onclick="seedMenuItems()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-bold uppercase tracking-widest px-4 py-3 rounded transition-colors border border-white/10 flex items-center gap-2" title="Reset menu to 40 default items">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9m-9 9a9 9 0 0 1 9-9"/></svg>
+            Seed Menu
+          </button>
+        </div>
+      </div>
+      <div id="menu-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </div>
+
+    <!-- STAFF ACTIVITY TAB -->
+    <div id="staff-activity" class="tab-content">
+      <div class="bg-[#111113] border border-white/5 rounded-xl shadow-lg overflow-hidden">
+        <div class="p-6 border-b border-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <h3 class="text-lg accent-font text-white">Staff Time In & Activity</h3>
+          <button onclick="openModal('add-activity-modal')" class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold uppercase tracking-widest px-6 py-3 rounded transition-colors shadow-lg shadow-amber-600/20 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Log Activity
+          </button>
+        </div>
+        <div id="activity-logs-list" class="divide-y divide-white/5"></div>
+      </div>
+    </div>
+
+    <!-- TIME IN TAB (NEW) -->
+    <div id="timein" class="tab-content">
+      <div class="max-w-lg mx-auto space-y-6">
+        <div class="bg-[#111113] border border-white/5 rounded-xl shadow-lg p-6">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div>
+              <h3 class="text-lg accent-font text-white">Clock In</h3>
+              <p class="text-zinc-500 text-xs">Location and time are recorded automatically and cannot be modified.</p>
+            </div>
+          </div>
+
+          <!-- Staff selector -->
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-500 mb-2 tracking-wider">Staff Member</label>
+              <select id="timein-staff" class="w-full bg-black border border-white/10 p-3 rounded-lg text-white focus:border-amber-500 outline-none transition-colors">
+                <option value="Chef Buster">Chef Buster</option>
+                <option value="Sous Chef John">Sous Chef John</option>
+                <option value="Manager Maria">Manager Maria</option>
+                <option value="Server Alex">Server Alex</option>
+              </select>
+            </div>
+
+            <!-- Locked: auto-time display -->
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-500 mb-2 tracking-wider flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Timestamp (System — Cannot Edit)
+              </label>
+              <div id="timein-clock-display" class="w-full bg-black/60 border border-red-500/20 p-3 rounded-lg text-red-300 font-mono text-sm select-none cursor-not-allowed flex items-center gap-2">
+                <span id="live-clock">--:-- --</span>
+                <span class="text-zinc-600">|</span>
+                <span id="live-date" class="text-zinc-500 text-xs"></span>
+              </div>
+            </div>
+
+            <!-- Locked: auto-location display -->
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-500 mb-2 tracking-wider flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                GPS Location — Must Be Within 100m of Store
+              </label>
+              <div id="timein-location-display" class="w-full bg-black/60 border border-red-500/20 p-3 rounded-lg text-red-300 font-mono text-xs select-none cursor-not-allowed min-h-[44px] flex items-center">
+                <span id="gps-status" class="text-zinc-500 italic">Press Clock In to capture location...</span>
+              </div>
+            </div>
+
+            <button onclick="doTimeIn()" id="timein-btn" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold uppercase tracking-widest py-4 rounded-xl transition-colors shadow-lg shadow-amber-900/20 flex items-center justify-center gap-2 text-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Clock In Now
+            </button>
+          </div>
+        </div>
+
+        <!-- Today's Time In Records -->
+        <div class="bg-[#111113] border border-white/5 rounded-xl overflow-hidden">
+          <div class="p-5 border-b border-white/5">
+            <h3 class="text-base accent-font text-white">Today's Clocked-In Records</h3>
+            <p class="text-zinc-600 text-xs mt-1">These entries are locked and cannot be edited or deleted by staff.</p>
+          </div>
+          <div id="timein-records" class="divide-y divide-white/5"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEEDBACK TAB -->
+    <div id="feedback" class="tab-content">
+      <div class="bg-[#111113] border border-white/5 rounded-xl shadow-lg overflow-hidden">
+        <div class="p-6 border-b border-white/5">
+          <h3 class="text-lg accent-font text-white">Customer Insights</h3>
+        </div>
+        <div id="feedback-list" class="divide-y divide-white/5"></div>
+      </div>
+    </div>
+
+    <!-- REPORTS TAB -->
+    <div id="reports" class="tab-content">
+      <!-- Controls bar -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+        <div class="flex items-center gap-3">
+          <label class="text-xs font-bold uppercase text-zinc-500 tracking-widest whitespace-nowrap">Select Month</label>
+          <input type="month" id="report-month-picker"
+            class="bg-black border border-white/10 text-sm text-zinc-200 px-3 py-2 rounded-lg focus:outline-none focus:border-amber-500 transition-colors"
+            style="color-scheme:dark;"
+            onchange="renderReport()">
+        </div>
+        <button onclick="window.print()"
+          class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold uppercase tracking-widest px-6 py-3 rounded-lg transition-colors shadow-lg shadow-amber-900/20 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Print Report
+        </button>
+      </div>
+      <!-- Printable area -->
+      <div id="report-print-area">
+        <p class="text-zinc-500 italic text-sm text-center py-12">Loading report…</p>
+      </div>
+    </div>
+
+    <!-- DEVELOPMENT TASKS TAB -->
+    <div id="dev-tasks" class="tab-content space-y-6">
+      <!-- Header Stats -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-gradient-to-br from-red-900/20 to-red-900/5 border border-red-500/30 rounded-xl p-6">
+          <p class="text-red-400 text-xs font-bold uppercase tracking-widest mb-2">🔴 Critical</p>
+          <h3 class="text-3xl font-bold text-white">3</h3>
+          <p class="text-red-300 text-xs mt-1">Urgent - Block Progress</p>
+        </div>
+        <div class="bg-gradient-to-br from-yellow-900/20 to-yellow-900/5 border border-yellow-500/30 rounded-xl p-6">
+          <p class="text-yellow-400 text-xs font-bold uppercase tracking-widest mb-2">🟡 Important</p>
+          <h3 class="text-3xl font-bold text-white">3</h3>
+          <p class="text-yellow-300 text-xs mt-1">High Priority</p>
+        </div>
+        <div class="bg-gradient-to-br from-green-900/20 to-green-900/5 border border-green-500/30 rounded-xl p-6">
+          <p class="text-green-400 text-xs font-bold uppercase tracking-widest mb-2">🟢 Nice to Have</p>
+          <h3 class="text-3xl font-bold text-white">3</h3>
+          <p class="text-green-300 text-xs mt-1">Enhancement</p>
+        </div>
+      </div>
+
+      <!-- CRITICAL TASKS -->
+      <div class="bg-[#111113] border border-red-500/20 rounded-xl overflow-hidden">
+        <div class="p-6 border-b border-red-500/10 bg-red-500/5">
+          <h3 class="text-lg accent-font text-red-400 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 7v5l4 3" fill="#111113"/></svg>
+            CRITICAL PRIORITY
+          </h3>
+          <p class="text-red-300/70 text-xs mt-1">These items block development progress</p>
+        </div>
+        <div class="divide-y divide-white/5 p-4 space-y-3">
+          <div class="flex items-start gap-4 pb-4">
+            <div class="w-5 h-5 rounded border-2 border-red-500 flex-shrink-0 mt-1 flex items-center justify-center">
+              <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-semibold text-white text-sm">.sql file / Database Clarification</h4>
+              <p class="text-zinc-400 text-xs mt-1">Need to clarify database schema and requirements with instructor</p>
+              <div class="flex gap-2 mt-2">
+                <span class="bg-red-500/20 text-red-300 px-2 py-1 rounded text-xs font-medium">Database</span>
+                <span class="bg-amber-500/20 text-amber-300 px-2 py-1 rounded text-xs font-medium">Instructor</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-start gap-4 py-4">
+            <div class="w-5 h-5 rounded border-2 border-red-500 flex-shrink-0 mt-1 flex items-center justify-center">
+              <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-semibold text-white text-sm">Charts/Graphs for Admin Dashboard</h4>
+              <p class="text-zinc-400 text-xs mt-1">Add Chart.js library and implement data visualization for analytics</p>
+              <div class="flex gap-2 mt-2">
+                <span class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-medium">Chart.js</span>
+                <span class="bg-purple-500/20 text-purple-300 px-2 py-1 rounded text-xs font-medium">Dashboard</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-start gap-4 py-4">
+            <div class="w-5 h-5 rounded border-2 border-red-500 flex-shrink-0 mt-1 flex items-center justify-center">
+              <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-semibold text-white text-sm">Password Recovery Feature</h4>
+              <p class="text-zinc-400 text-xs mt-1">Implement Firebase sendPasswordResetEmail functionality for account recovery</p>
+              <div class="flex gap-2 mt-2">
+                <span class="bg-green-500/20 text-green-300 px-2 py-1 rounded text-xs font-medium">Firebase</span>
+                <span class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-medium">Auth</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- IMPORTANT TASKS -->
+      <div class="bg-[#111113] border border-yellow-500/20 rounded-xl overflow-hidden">
+        <div class="p-6 border-b border-yellow-500/10 bg-yellow-500/5">
+          <h3 class="text-lg accent-font text-yellow-400 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/></svg>
+            IMPORTANT PRIORITY
+          </h3>
+          <p class="text-yellow-300/70 text-xs mt-1">High impact features that should be completed soon</p>
+        </div>
+        <div class="divide-y divide-white/5 p-4 space-y-3">
+          <div class="flex items-start gap-4 pb-4">
+            <div class="w-5 h-5 rounded border-2 border-yellow-500 flex-shrink-0 mt-1 flex items-center justify-center">
+              <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-semibold text-white text-sm">User Profile Page for Customers</h4>
+              <p class="text-zinc-400 text-xs mt-1">Create dedicated profile page where customers can view and edit their account information</p>
+              <div class="flex gap-2 mt-2">
+                <span class="bg-purple-500/20 text-purple-300 px-2 py-1 rounded text-xs font-medium">Frontend</span>
+                <span class="bg-pink-500/20 text-pink-300 px-2 py-1 rounded text-xs font-medium">UX</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-start gap-4 py-4">
+            <div class="w-5 h-5 rounded border-2 border-yellow-500 flex-shrink-0 mt-1 flex items-center justify-center">
+              <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-semibold text-white text-sm">Dynamic Owner Stats</h4>
+              <p class="text-zinc-400 text-xs mt-1">Replace hardcoded owner statistics with dynamic data pulled from database in real-time</p>
+              <div class="flex gap-2 mt-2">
+                <span class="bg-cyan-500/20 text-cyan-300 px-2 py-1 rounded text-xs font-medium">Backend</span>
+                <span class="bg-emerald-500/20 text-emerald-300 px-2 py-1 rounded text-xs font-medium">Data</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-start gap-4 py-4">
+            <div class="w-5 h-5 rounded border-2 border-yellow-500 flex-shrink-0 mt-1 flex items-center justify-center">
+              <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-semibold text-white text-sm">GitHub Repository Setup</h4>
+              <p class="text-zinc-400 text-xs mt-1">Create and organize GitHub repo with clean folder structure and proper documentation</p>
+              <div class="flex gap-2 mt-2">
+                <span class="bg-gray-500/20 text-gray-300 px-2 py-1 rounded text-xs font-medium">GitHub</span>
+                <span class="bg-orange-500/20 text-orange-300 px-2 py-1 rounded text-xs font-medium">DevOps</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NICE TO HAVE TASKS -->
+      <div class="bg-[#111113] border border-green-500/20 rounded-xl overflow-hidden">
+        <div class="p-6 border-b border-green-500/10 bg-green-500/5">
+          <h3 class="text-lg accent-font text-green-400 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            NICE TO HAVE
+          </h3>
+          <p class="text-green-300/70 text-xs mt-1">Enhancement features for future releases</p>
+        </div>
+        <div class="divide-y divide-white/5 p-4 space-y-3">
+          <div class="flex items-start gap-4 pb-4">
+            <div class="w-5 h-5 rounded border-2 border-green-500 flex-shrink-0 mt-1 flex items-center justify-center">
+              <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-semibold text-white text-sm">Settings Page</h4>
+              <p class="text-zinc-400 text-xs mt-1">Build dedicated settings page for app preferences, notifications, and account management options</p>
+              <div class="flex gap-2 mt-2">
+                <span class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-medium">UI</span>
+                <span class="bg-indigo-500/20 text-indigo-300 px-2 py-1 rounded text-xs font-medium">Config</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-start gap-4 py-4">
+            <div class="w-5 h-5 rounded border-2 border-green-500 flex-shrink-0 mt-1 flex items-center justify-center">
+              <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-semibold text-white text-sm">Notification Panel</h4>
+              <p class="text-zinc-400 text-xs mt-1">Create real-time notification center with alerts for bookings, orders, and system updates</p>
+              <div class="flex gap-2 mt-2">
+                <span class="bg-pink-500/20 text-pink-300 px-2 py-1 rounded text-xs font-medium">Realtime</span>
+                <span class="bg-red-500/20 text-red-300 px-2 py-1 rounded text-xs font-medium">Alert</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-start gap-4 py-4">
+            <div class="w-5 h-5 rounded border-2 border-green-500 flex-shrink-0 mt-1 flex items-center justify-center">
+              <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-semibold text-white text-sm">Customer Activity History</h4>
+              <p class="text-zinc-400 text-xs mt-1">Track and display comprehensive activity timeline for each customer including bookings and interactions</p>
+              <div class="flex gap-2 mt-2">
+                <span class="bg-teal-500/20 text-teal-300 px-2 py-1 rounded text-xs font-medium">Analytics</span>
+                <span class="bg-cyan-500/20 text-cyan-300 px-2 py-1 rounded text-xs font-medium">History</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Notes -->
+      <div class="bg-[#111113] border border-white/5 rounded-xl p-6">
+        <h3 class="text-sm accent-font text-amber-400 mb-4 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          DEVELOPMENT NOTES
+        </h3>
+        <div class="text-zinc-400 text-xs space-y-2">
+          <p>📌 <strong>Last Updated:</strong> May 24, 2026</p>
+          <p>👤 <strong>Lead Developer:</strong> S (BSIT Student)</p>
+          <p>📍 <strong>Location:</strong> San Pascual, Calabarzon, PH</p>
+          <p>💼 <strong>Project:</strong> Chef Buster Cuisine - Admin Dashboard & Booking System</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS TAB -->
+    <div id="settings" class="tab-content space-y-6">
+      <!-- General Settings -->
+      <div class="bg-[#111113] border border-white/5 rounded-xl overflow-hidden">
+        <div class="p-6 border-b border-white/5 bg-[#050505]">
+          <h3 class="text-lg accent-font text-white">General Settings</h3>
+        </div>
+        <div class="p-6 space-y-5">
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-500 mb-2 tracking-wider">Restaurant Name</label>
+            <input type="text" value="Chef Buster Cuisine" class="w-full bg-black border border-white/10 p-4 rounded-xl text-white focus:border-amber-500 outline-none transition-colors" placeholder="Restaurant name">
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-500 mb-2 tracking-wider">Contact Number</label>
+              <input type="tel" value="+63 123 456 7890" class="w-full bg-black border border-white/10 p-4 rounded-xl text-white focus:border-amber-500 outline-none transition-colors">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-500 mb-2 tracking-wider">Email</label>
+              <input type="email" value="chefbustercuisine@gmail.com" class="w-full bg-black border border-white/10 p-4 rounded-xl text-white focus:border-amber-500 outline-none transition-colors">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-500 mb-2 tracking-wider">Location / Address</label>
+            <textarea class="w-full bg-black border border-white/10 p-4 rounded-xl text-white focus:border-amber-500 outline-none transition-colors" rows="3" placeholder="Full address">Chef Buster Cuisine, Naga City, Calabarzon, Philippines</textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notification Settings -->
+      <div class="bg-[#111113] border border-white/5 rounded-xl overflow-hidden">
+        <div class="p-6 border-b border-white/5 bg-[#050505]">
+          <h3 class="text-lg accent-font text-white">Notification Settings</h3>
+        </div>
+        <div class="p-6 space-y-4">
+          <label class="flex items-center justify-between cursor-pointer group">
+            <div>
+              <p class="text-white font-medium text-sm">Email Notifications</p>
+              <p class="text-zinc-400 text-xs">Receive email alerts for bookings and orders</p>
+            </div>
+            <div class="w-12 h-7 bg-amber-500/20 border border-amber-500/30 rounded-full flex items-center px-1 transition-all group-hover:bg-amber-500/30">
+              <div class="w-5 h-5 bg-amber-500 rounded-full transform transition-transform translate-x-5"></div>
+            </div>
+          </label>
+          <label class="flex items-center justify-between cursor-pointer group">
+            <div>
+              <p class="text-white font-medium text-sm">SMS Alerts</p>
+              <p class="text-zinc-400 text-xs">Send booking confirmations via SMS</p>
+            </div>
+            <div class="w-12 h-7 bg-white/10 border border-white/20 rounded-full flex items-center px-1 transition-all group-hover:bg-white/15">
+              <div class="w-5 h-5 bg-white/30 rounded-full transform transition-transform"></div>
+            </div>
+          </label>
+          <label class="flex items-center justify-between cursor-pointer group">
+            <div>
+              <p class="text-white font-medium text-sm">Push Notifications</p>
+              <p class="text-zinc-400 text-xs">Instant alerts on new bookings</p>
+            </div>
+            <div class="w-12 h-7 bg-amber-500/20 border border-amber-500/30 rounded-full flex items-center px-1 transition-all group-hover:bg-amber-500/30">
+              <div class="w-5 h-5 bg-amber-500 rounded-full transform transition-transform translate-x-5"></div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Security Settings -->
+      <div class="bg-[#111113] border border-white/5 rounded-xl overflow-hidden">
+        <div class="p-6 border-b border-white/5 bg-[#050505]">
+          <h3 class="text-lg accent-font text-white">Security & Privacy</h3>
+        </div>
+        <div class="p-6 space-y-4">
+          <button class="w-full px-6 py-3 rounded-lg border border-white/10 text-white font-medium text-sm hover:bg-white/5 transition-colors flex items-center justify-between group">
+            <span>Change Password</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="opacity-0 group-hover:opacity-100 transition-opacity"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <button class="w-full px-6 py-3 rounded-lg border border-white/10 text-white font-medium text-sm hover:bg-white/5 transition-colors flex items-center justify-between group">
+            <span>Two-Factor Authentication</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="opacity-0 group-hover:opacity-100 transition-opacity"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <button class="w-full px-6 py-3 rounded-lg border border-white/10 text-white font-medium text-sm hover:bg-white/5 transition-colors flex items-center justify-between group">
+            <span>Manage API Keys</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="opacity-0 group-hover:opacity-100 transition-opacity"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Database Settings -->
+      <div class="bg-[#111113] border border-red-500/20 rounded-xl overflow-hidden">
+        <div class="p-6 border-b border-red-500/10 bg-red-500/5">
+          <h3 class="text-lg accent-font text-red-400">Danger Zone</h3>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="bg-red-500/5 border border-red-500/20 rounded-lg p-4">
+            <p class="text-white font-medium text-sm mb-2">Export Database</p>
+            <p class="text-zinc-400 text-xs mb-3">Download all data as JSON backup file</p>
+            <button onclick="exportDatabase()" class="px-4 py-2 rounded text-sm font-semibold bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition-colors">Export Data</button>
+          </div>
+          <div class="bg-red-500/5 border border-red-500/20 rounded-lg p-4">
+            <p class="text-white font-medium text-sm mb-2">Clear All Data</p>
+            <p class="text-zinc-400 text-xs mb-3">⚠️ This action cannot be undone</p>
+            <button onclick="if(confirm('Are you sure? This will delete all data!')) { db_local = {slots:[], menu:[], feedback:[], bookings:[], activity:[]}; localStorage.clear(); location.reload(); }" class="px-4 py-2 rounded text-sm font-semibold bg-red-600 text-white hover:bg-red-700 transition-colors">Delete All Data</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Save Button -->
+      <div class="flex gap-3">
+        <button onclick="saveSettings()" class="flex-1 bg-amber-600 hover:bg-amber-500 text-white font-bold tracking-widest py-3 rounded transition-colors">SAVE SETTINGS</button>
+      </div>
+    </div>
+
+
+<!-- MODAL: ADD SLOT -->
+<div id="add-slot-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 hidden">
+  <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" onclick="closeModal('add-slot-modal')"></div>
+  <div class="bg-[#111113] border border-white/10 p-8 rounded-2xl w-full max-w-md relative modal-enter shadow-2xl">
+    <h3 class="text-2xl font-bold mb-6 accent-font tracking-wider">Create Availability</h3>
+    <form onsubmit="handleAddSlot(event)" class="space-y-6">
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold uppercase text-zinc-500 mb-2 tracking-wider">1. Select Date</label>
+          <input type="date" id="new-slot-date" required name="date" class="w-full bg-black border border-white/10 p-4 rounded-xl text-white focus:border-amber-500 outline-none transition-all">
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase text-zinc-500 mb-2 tracking-wider">2. Select Time</label>
+          <div class="grid grid-cols-3 gap-2 mb-3">
+            <button type="button" onclick="quickTime('11:00')" class="time-chip py-2 text-xs border border-white/10 rounded-lg text-zinc-400 hover:border-amber-500/50 transition-all uppercase font-medium">11:00 AM</button>
+            <button type="button" onclick="quickTime('13:00')" class="time-chip py-2 text-xs border border-white/10 rounded-lg text-zinc-400 hover:border-amber-500/50 transition-all uppercase font-medium">01:00 PM</button>
+            <button type="button" onclick="quickTime('18:00')" class="time-chip py-2 text-xs border border-white/10 rounded-lg text-zinc-400 hover:border-amber-500/50 transition-all uppercase font-medium">06:00 PM</button>
+            <button type="button" onclick="quickTime('19:30')" class="time-chip py-2 text-xs border border-white/10 rounded-lg text-zinc-400 hover:border-amber-500/50 transition-all uppercase font-medium">07:30 PM</button>
+            <button type="button" onclick="quickTime('21:00')" class="time-chip py-2 text-xs border border-white/10 rounded-lg text-zinc-400 hover:border-amber-500/50 transition-all uppercase font-medium">09:00 PM</button>
+            <button type="button" onclick="document.getElementById('new-slot-time').focus()" class="py-2 text-xs border border-white/5 bg-white/5 rounded-lg text-zinc-500 italic uppercase">Custom</button>
+          </div>
+          <input type="time" id="new-slot-time" required name="time" class="w-full bg-black border border-white/10 p-4 rounded-xl text-white focus:border-amber-500 outline-none transition-all">
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase text-zinc-500 mb-2 tracking-wider">3. Maximum Capacity (Pax)</label>
+          <p class="text-zinc-600 text-xs mb-2">Set the maximum number of guests allowed for this slot. Users will choose their party size when booking.</p>
+          <div class="flex items-center gap-4 bg-black border border-white/10 p-1 rounded-xl">
+            <button type="button" onclick="adjustPax(-1)" class="w-12 h-12 flex items-center justify-center text-zinc-400 hover:text-white transition-colors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+            <input type="number" id="new-slot-pax" required name="pax" value="4" min="1" max="15" class="flex-1 bg-transparent text-center text-xl font-bold text-white outline-none">
+            <button type="button" onclick="adjustPax(1)" class="w-12 h-12 flex items-center justify-center text-zinc-400 hover:text-white transition-colors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          </div>
+        </div>
+      </div>
+      <div class="pt-2 flex gap-3">
+        <button type="button" onclick="closeModal('add-slot-modal')" class="flex-1 px-4 py-4 rounded-xl border border-white/10 text-sm font-semibold hover:bg-white/5 transition-colors">Cancel</button>
+        <button type="submit" class="flex-1 px-4 py-4 rounded-xl bg-amber-600 text-white text-sm font-bold uppercase tracking-widest hover:bg-amber-500 transition-colors shadow-lg shadow-amber-900/20">Publish Slot</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- MODAL: BULK CREATE SLOTS -->
+<div id="bulk-slot-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 hidden">
+  <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" onclick="closeModal('bulk-slot-modal')"></div>
+  <div class="bg-[#111113] border border-white/10 p-8 rounded-2xl w-full max-w-lg relative modal-enter shadow-2xl max-h-[90vh] overflow-y-auto">
+    <h3 class="text-2xl font-bold mb-2 accent-font tracking-wider">Bulk Create Slots</h3>
+    <p class="text-zinc-500 text-xs mb-6">Create multiple time slots for a date range automatically.</p>
+    <form onsubmit="handleBulkAddSlots(event)" class="space-y-5">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-bold uppercase text-zinc-500 mb-2 tracking-wider">Start Date</label>
+          <input type="date" id="bulk-start-date" required name="startDate" class="w-full bg-black border border-white/10 p-4 rounded-xl text-white focus:border-amber-500 outline-none transition-all">
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase text-zinc-500 mb-2 tracking-wider">End Date</label>
+          <input type="date" id="bulk-end-date" required name="endDate" class="w-full bg-black border border-white/10 p-4 rounded-xl text-white focus:border-amber-500 outline-none transition-all">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold uppercase text-zinc-500 mb-2 tracking-wider">Time Slots Per Day</label>
+        <div class="grid grid-cols-2 gap-2">
+          <label class="flex items-center gap-2 bg-black border border-white/10 p-3 rounded-lg cursor-pointer hover:border-amber-500/50 transition-colors">
+            <input type="checkbox" name="times" value="11:00" class="accent-amber-500">
+            <span class="text-sm text-zinc-300">11:00 AM</span>
+          </label>
+          <label class="flex items-center gap-2 bg-black border border-white/10 p-3 rounded-lg cursor-pointer hover:border-amber-500/50 transition-colors">
+            <input type="checkbox" name="times" value="13:00" class="accent-amber-500">
+            <span class="text-sm text-zinc-300">01:00 PM</span>
+          </label>
+          <label class="flex items-center gap-2 bg-black border border-white/10 p-3 rounded-lg cursor-pointer hover:border-amber-500/50 transition-colors">
+            <input type="checkbox" name="times" value="18:00" class="accent-amber-500" checked>
+            <span class="text-sm text-zinc-300">06:00 PM</span>
+          </label>
+          <label class="flex items-center gap-2 bg-black border border-white/10 p-3 rounded-lg cursor-pointer hover:border-amber-500/50 transition-colors">
+            <input type="checkbox" name="times" value="19:30" class="accent-amber-500" checked>
+            <span class="text-sm text-zinc-300">07:30 PM</span>
+          </label>
+          <label class="flex items-center gap-2 bg-black border border-white/10 p-3 rounded-lg cursor-pointer hover:border-amber-500/50 transition-colors">
+            <input type="checkbox" name="times" value="21:00" class="accent-amber-500">
+            <span class="text-sm text-zinc-300">09:00 PM</span>
+          </label>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold uppercase text-zinc-500 mb-2 tracking-wider">Maximum Capacity Per Slot (Max 15)</label>
+        <div class="flex items-center gap-4 bg-black border border-white/10 p-1 rounded-xl">
+          <button type="button" onclick="adjustBulkPax(-1)" class="w-12 h-12 flex items-center justify-center text-zinc-400 hover:text-white transition-colors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <input type="number" id="bulk-slot-pax" required name="pax" value="4" min="1" max="15" readonly class="flex-1 bg-transparent text-center text-xl font-bold text-white outline-none">
+          <button type="button" onclick="adjustBulkPax(1)" class="w-12 h-12 flex items-center justify-center text-zinc-400 hover:text-white transition-colors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        </div>
+      </div>
+
+      <div class="bg-amber-500/5 border border-amber-500/20 rounded-lg p-4">
+        <p class="text-amber-400 text-xs font-medium flex items-center gap-2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          Preview: <span id="bulk-preview" class="text-white">Select dates and times to see preview</span>
+        </p>
+      </div>
+
+      <div class="pt-2 flex gap-3">
+        <button type="button" onclick="closeModal('bulk-slot-modal')" class="flex-1 px-4 py-4 rounded-xl border border-white/10 text-sm font-semibold hover:bg-white/5 transition-colors">Cancel</button>
+        <button type="submit" id="bulk-submit-btn" class="flex-1 px-4 py-4 rounded-xl bg-amber-600 text-white text-sm font-bold uppercase tracking-widest hover:bg-amber-500 transition-colors shadow-lg shadow-amber-900/20">Create All Slots</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL: ADD MENU ITEM -->
+<div id="add-item-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 hidden">
+  <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" onclick="closeModal('add-item-modal')"></div>
+  <div class="bg-[#111113] border border-white/10 p-8 rounded-2xl w-full max-w-md relative modal-enter shadow-2xl">
+    <h3 class="text-2xl font-bold mb-6 accent-font tracking-wider">New Menu Item</h3>
+    <form onsubmit="handleAddItem(event)" class="space-y-4">
+      <div>
+        <label class="block text-xs font-bold uppercase text-zinc-500 mb-1.5 tracking-wider">Name</label>
+        <input type="text" required name="name" class="w-full bg-black border border-white/10 p-3 rounded-lg text-white focus:border-amber-500 outline-none transition-colors">
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-bold uppercase text-zinc-500 mb-1.5 tracking-wider">Price (₱)</label>
+          <input type="number" required name="price" class="w-full bg-black border border-white/10 p-3 rounded-lg text-white focus:border-amber-500 outline-none transition-colors">
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase text-zinc-500 mb-1.5 tracking-wider">Category</label>
+          <select name="category" class="w-full bg-black border border-white/10 p-3 rounded-lg text-white focus:border-amber-500 outline-none transition-colors">
+            <option value="chicken">🍗 Chicken</option>
+            <option value="pork">🥩 Pork</option>
+            <option value="lechon">🐷 Lechon</option>
+            <option value="bulaklak">🍖 Bulaklak</option>
+            <option value="pasta">🍝 Pasta</option>
+            <option value="drinks">🥤 Drinks</option>
+            <option value="sides">🥗 Sides</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-bold uppercase text-zinc-500 mb-1.5 tracking-wider">Description</label>
+        <textarea name="desc" rows="3" class="w-full bg-black border border-white/10 p-3 rounded-lg text-white focus:border-amber-500 outline-none transition-colors resize-none"></textarea>
+      </div>
+      <div>
+        <label class="block text-xs font-bold uppercase text-zinc-500 mb-1.5 tracking-wider">Initial Status</label>
+        <select name="status" class="w-full bg-black border border-white/10 p-3 rounded-lg text-white focus:border-amber-500 outline-none transition-colors">
+          <option value="available">Available</option>
+          <option value="new">New (Brand New)</option>
+          <option value="unavailable">Unavailable</option>
+        </select>
+      </div>
+      <div class="pt-4 flex gap-3">
+        <button type="button" onclick="closeModal('add-item-modal')" class="flex-1 px-4 py-3 rounded-xl border border-white/10 text-sm font-semibold hover:bg-white/5 transition-colors">Cancel</button>
+        <button type="submit" class="flex-1 px-4 py-3 rounded-xl bg-amber-600 text-white text-sm font-semibold hover:bg-amber-500">Save Item</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL: ADD ACTIVITY -->
+<div id="add-activity-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 hidden">
+  <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" onclick="closeModal('add-activity-modal')"></div>
+  <div class="bg-[#111113] border border-white/10 p-8 rounded-2xl w-full max-w-md relative modal-enter shadow-2xl">
+    <h3 class="text-2xl font-bold mb-2 accent-font tracking-wider">Log Time & Activity</h3>
+    <p class="text-zinc-500 text-xs mb-6">Time is automatically recorded by the system.</p>
+    <form onsubmit="handleAddActivity(event)" class="space-y-4">
+      <div>
+        <label class="block text-xs font-bold uppercase text-zinc-500 mb-1.5 tracking-wider">Staff Member</label>
+        <select required name="staff" class="w-full bg-black border border-white/10 p-3 rounded-lg text-white focus:border-amber-500 outline-none transition-colors">
+          <option value="Chef Buster">Chef Buster</option>
+          <option value="Sous Chef John">Sous Chef John</option>
+          <option value="Manager Maria">Manager Maria</option>
+          <option value="Server Alex">Server Alex</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-bold uppercase text-zinc-500 mb-1.5 tracking-wider">Location</label>
+        <div class="flex gap-2">
+          <input type="text" id="activity-location" required name="location" placeholder="Address or Coordinates" class="flex-1 bg-black border border-white/10 p-3 rounded-lg text-white focus:border-amber-500 outline-none transition-colors text-sm">
+          <button type="button" onclick="fetchGPS()" class="px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-zinc-400 hover:text-blue-400 hover:border-blue-500/50 transition-colors flex items-center justify-center" title="Get GPS">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-bold uppercase text-zinc-500 mb-1.5 tracking-wider">Activity Description</label>
+        <textarea required name="desc" rows="3" placeholder="e.g. Clocked in for morning shift, prep started." class="w-full bg-black border border-white/10 p-3 rounded-lg text-white focus:border-amber-500 outline-none transition-colors resize-none"></textarea>
+      </div>
+      <div>
+        <label class="block text-xs font-bold uppercase text-zinc-500 mb-1.5 tracking-wider">Attach Photo Proof</label>
+        <input type="file" id="activity-photo" accept="image/*" class="hidden" onchange="previewActivityPhoto(event)">
+        <label for="activity-photo" class="w-full bg-black border border-white/10 border-dashed p-4 rounded-lg flex flex-col items-center justify-center text-zinc-500 cursor-pointer hover:border-amber-500 hover:text-amber-500 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mb-2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span class="text-xs font-medium">Click to upload photo</span>
+        </label>
+        <div id="photo-preview-container" class="mt-3 hidden relative rounded-lg overflow-hidden border border-white/10">
+          <img id="photo-preview-img" src="" alt="Preview" class="w-full h-40 object-cover">
+          <button type="button" onclick="clearActivityPhoto()" class="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center shadow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+      </div>
+      <div class="pt-4 flex gap-3">
+        <button type="button" onclick="closeModal('add-activity-modal')" class="flex-1 px-4 py-3 rounded-xl border border-white/10 text-sm font-semibold hover:bg-white/5 transition-colors">Cancel</button>
+        <button type="submit" class="flex-1 px-4 py-3 rounded-xl bg-amber-600 text-white text-sm font-semibold hover:bg-amber-500">Submit Log</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+        // Firebase init promise - resolved by module script when ready
+        window._fbReady = new Promise((resolve) => {
+            window._resolveFb = resolve;
+        });
+    </script>
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, doc, getDocs, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDdJVUxGBpxv-7Vsh18NDLqElWUi6HsWh0",
+    authDomain: "chefbuster-48981.firebaseapp.com",
+    projectId: "chefbuster-48981",
+    storageBucket: "chefbuster-48981.firebasestorage.app",
+    messagingSenderId: "733553214399",
+    appId: "1:733553214399:web:f58cc78ff9fb0b94cc970a",
+    measurementId: "G-EW3JKSJXRF"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const firestore = getFirestore(app);
+  const auth = getAuth(app);
+
+  window._fb = { db: firestore, auth, collection, doc, getDocs, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, query, orderBy, signOut };
+      if (window._resolveFb) window._resolveFb(window._fb);
+
+  // AUTH GATE: hide page until Firebase confirms session, then check role
+  document.body.style.visibility = 'hidden';
+
+  onAuthStateChanged(auth, (user) => {
+    const adminEmails = ['chefbustercuisine@gmail.com'];
+    const storedRole  = localStorage.getItem('userRole');
+    const storedToken = localStorage.getItem('userToken');
+
+    let isAdmin = false;
+    if (user) {
+      isAdmin = adminEmails.includes(user.email) || storedRole === 'admin';
+    } else {
+      isAdmin = !!(storedToken && storedRole === 'admin');
+    }
+
+    if (isAdmin) {
+      document.body.style.visibility = 'visible';
+      // Wait for _fb to be ready before starting listeners
+      window._fbReady.then(() => {
+        if (typeof window._startFirestoreListeners === 'function') {
+          window._startFirestoreListeners();
+        }
+      });
+    } else {
+      window.location.href = 'index.html';
+    }
+  });
+
+  // Start Firestore listeners - called after auth gate confirms admin
+  window._startFirestoreListeners = function() {
+    if (!window._fb) {
+        console.warn("Firebase not ready, retrying listeners...");
+        setTimeout(() => window._startFirestoreListeners && window._startFirestoreListeners(), 1000);
+        return;
+    }
+    const { db, collection, query, orderBy, onSnapshot } = window._fb;
+
+    // Slots listener
+    onSnapshot(query(collection(db, 'slots'), orderBy('date')), snap => {
+      db_local.slots = snap.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
+      renderData();
+    }, err => console.warn('Slots listener error:', err));
+
+    // Bookings listener
+    onSnapshot(query(collection(db, 'bookings'), orderBy('createdAt')), snap => {
+      db_local.bookings = snap.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
+    }, err => console.warn('Bookings listener error:', err));
+
+    // Feedback listener
+    onSnapshot(query(collection(db, 'feedback'), orderBy('createdAt')), snap => {
+      db_local.feedback = snap.docs.map(d => ({ firestoreId: d.id, ...d.data(), time: d.data().createdAt ? new Date(d.data().createdAt.seconds * 1000).toLocaleString() : 'Just now' }));
+      renderData();
+    }, err => console.warn('Feedback listener error:', err));
+
+    // Activity listener
+    onSnapshot(query(collection(db, 'activity'), orderBy('timestamp', 'desc')), snap => {
+      db_local.activity = snap.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
+      renderData();
+    }, err => console.warn('Activity listener error:', err));
+
+    // Timeins listener
+    onSnapshot(query(collection(db, 'timeins'), orderBy('timestamp', 'desc')), snap => {
+      db_local.timeins = snap.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
+      renderData();
+    }, err => console.warn('Timeins listener error:', err));
+
+    // Menu listener
+    onSnapshot(query(collection(db, 'menu_items'), orderBy('createdAt')), snap => {
+      if(snap.empty) {
+        seedMenuItems();
+        return;
+      }
+      db_local.menu = snap.docs.map(d => ({
+        firestoreId: d.id,
+        id: d.id,
+        name: d.data().name,
+        category: d.data().category,
+        desc: d.data().description || d.data().desc || '',
+        description: d.data().description || d.data().desc || '',
+        price: d.data().price,
+        status: d.data().status || (d.data().active ? 'available' : 'unavailable'),
+        active: d.data().active !== false
+      }));
+      renderData();
+    }, err => console.warn('Menu listener error:', err));
+  };
+</script>
+
+<script>
+// ---- DATA ----
+let db_local = {
+  slots: [],
+  bookings: [],
+  menu: [],
+  feedback: [],
+  activity: [],
+  timeins: []
+};
+
+// ---- FAKE OWNER DATA ----
+const ownerData = {
+  fullStaffLogs: [
+    { staff:"Chef Buster", type:"Time In", location:"13.6218, 123.1838", timestamp: new Date(Date.now()-3600000).toISOString(), locked:true },
+    { staff:"Manager Maria", type:"Market Run", location:"Magsaysay Ave, Naga", timestamp: new Date(Date.now()-7200000).toISOString(), locked:true },
+    { staff:"Sous Chef John", type:"Time In", location:"13.6198, 123.1850", timestamp: new Date(Date.now()-10800000).toISOString(), locked:true },
+    { staff:"Server Alex", type:"Time In", location:"13.6205, 123.1842", timestamp: new Date(Date.now()-14400000).toISOString(), locked:true },
+    { staff:"Chef Buster", type:"Time Out", location:"13.6218, 123.1838", timestamp: new Date(Date.now()-900000).toISOString(), locked:true }
+  ],
+  bookings: [
+    { guest:"John Doe", date:"2026-03-01", time:"19:00", pax:4, amount:"₱2,600", status:"Completed", contact:"+63 912 345 6789" },
+    { guest:"Maria Cruz", date:"2026-03-02", time:"18:00", pax:6, amount:"₱4,200", status:"Completed", contact:"+63 998 765 4321" },
+    { guest:"Carlos Santos", date:"2026-03-05", time:"19:30", pax:2, amount:"₱1,400", status:"Completed", contact:"+63 977 123 4567" },
+    { guest:"Ana Villanueva", date:"2026-03-07", time:"20:00", pax:8, amount:"₱5,800", status:"Completed", contact:"+63 920 987 6543" },
+    { guest:"Rico Delos Santos", date:"2026-03-08", time:"18:30", pax:4, amount:"₱2,800", status:"Completed", contact:"+63 956 234 5678" },
+    { guest:"Jenny Tan", date:"2026-03-10", time:"19:00", pax:2, amount:"₱1,500", status:"Upcoming", contact:"+63 917 345 6789" },
+    { guest:"Mark Aguilar", date:"2026-03-13", time:"19:30", pax:6, amount:"₱4,500", status:"Upcoming", contact:"+63 933 456 7890" }
+  ],
+  revenue: [
+    { label:"Mains", amount:28400, pct:59 },
+    { label:"Appetizers", amount:9800, pct:20 },
+    { label:"Drinks", amount:5200, pct:11 },
+    { label:"Desserts", amount:4850, pct:10 }
+  ]
+};
+
+let currentMenuFilter = 'All';
+
+// ---- UI CORE ----
+function showToast(message, type="info") {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  const colors = { success:'border-green-500/50 bg-[#0a1a0a] text-green-400', error:'border-red-500/50 bg-[#1a0a0a] text-red-400', info:'border-amber-500/50 bg-[#1a150a] text-amber-500' };
+  toast.className = `toast px-4 py-3 rounded-lg border shadow-2xl flex items-center gap-3 min-w-[240px] ${colors[type]}`;
+  toast.innerHTML = `<span class="text-sm font-medium">${message}</span>`;
+  container.appendChild(toast);
+  setTimeout(()=>toast.remove(), 3400);
+}
+
+function switchTab(tabId) {
+  // Reports tab requires owner auth
+  if(tabId === 'reports') {
+    if(!window._ownerAuthenticated) {
+      window._pendingTab = 'reports';
+      openPwModal();
+      return;
+    }
+    // Set month picker default to current month
+    const picker = document.getElementById('report-month-picker');
+    if(!picker.value) {
+      const now = new Date();
+      picker.value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    }
+  }
+  if(tabId==='timein') {
+    startLiveClock();
+  } else {
+    if(typeof liveClockInterval !== 'undefined' && liveClockInterval) { clearInterval(liveClockInterval); liveClockInterval=null; }
+  }
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  const link = document.querySelector(`.nav-link[data-target="${tabId}"]`);
+  if(link) link.classList.add('active');
+  const titles = { dashboard:'Dashboard', slots:'Slot Manager', 'menu-manager':'Menu Manager', 'staff-activity':'Staff Logs', timein:'Time In', feedback:'Feedback', reports:'Reports' };
+  document.getElementById('page-title').textContent = titles[tabId]||'Admin';
+  if(window.innerWidth<768) toggleSidebar();
+  renderData();
+  if(tabId==='reports') renderReport();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('-translate-x-full');
+  document.getElementById('sidebar-overlay').classList.toggle('hidden');
+}
+
+function openModal(id) {
+  document.getElementById(id).classList.remove('hidden');
+  if(id==='add-slot-modal') document.getElementById('new-slot-date').value = new Date().toISOString().split('T')[0];
+}
+
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+function formatTime12(time24) {
+  const [h,m] = time24.split(':');
+  const hr = parseInt(h);
+  return `${hr%12||12}:${m} ${hr>=12?'PM':'AM'}`;
+}
+
+// ---- PASSWORD / OWNER VIEW ----
+function openPwModal() {
+  document.getElementById('pw-modal').classList.remove('hidden');
+  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-error').classList.add('hidden');
+  setTimeout(()=>document.getElementById('pw-input').focus(), 100);
+}
+
+function closePwModal() {
+  document.getElementById('pw-modal').classList.add('hidden');
+}
+
+function togglePwVisibility() {
+  const input = document.getElementById('pw-input');
+  input.type = input.type==='password' ? 'text' : 'password';
+}
+
+function checkPassword() {
+  const val = document.getElementById('pw-input').value;
+  if(val === 'randyrosero') {
+    window._ownerAuthenticated = true;
+    closePwModal();
+    if(window._pendingTab === 'reports') {
+      window._pendingTab = null;
+      switchTab('reports');
+    } else {
+      openOwnerPanel();
+    }
+  } else {
+    document.getElementById('pw-error').classList.remove('hidden');
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').classList.add('border-red-500');
+    setTimeout(()=>document.getElementById('pw-input').classList.remove('border-red-500'), 1000);
+  }
+}
+
+function openOwnerPanel() {
+  document.getElementById('owner-panel').style.display = 'flex';
+  document.getElementById('owner-panel').style.flexDirection = 'column';
+  renderOwnerData();
+  showToast('Welcome, Randy! Owner view unlocked.', 'success');
+}
+
+function closeOwnerPanel() {
+  document.getElementById('owner-panel').style.display = 'none';
+  window._ownerAuthenticated = false;
+}
+
+function renderOwnerData() {
+  // Staff Logs
+  const logsList = document.getElementById('owner-staff-logs');
+  logsList.innerHTML = ownerData.fullStaffLogs.map(log => {
+    const date = new Date(log.timestamp);
+    const timeStr = `${date.toLocaleDateString()} at ${formatTime12(date.toTimeString().slice(0,5))}`;
+    return `
+    <div class="p-4 flex items-start gap-4 hover:bg-white/[0.02] transition-colors">
+      <div class="w-9 h-9 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center font-bold shrink-0 border border-amber-500/20 text-sm">
+        ${log.staff.charAt(0)}
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex justify-between items-start gap-2">
+          <p class="text-white text-sm font-medium">${log.staff}</p>
+          <span class="text-[9px] bg-red-500/10 text-red-400 px-2 py-0.5 rounded border border-red-500/20 font-bold uppercase shrink-0">🔒 Locked</span>
+        </div>
+        <p class="text-zinc-500 text-xs mt-0.5">${log.type}</p>
+        ${log.location ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(log.location)}" target="_blank" class="inline-flex items-center gap-1 mt-1 text-blue-400 hover:text-blue-300 text-xs"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${log.location}</a>` : ''}
+        <p class="text-zinc-600 text-[10px] mt-1 font-mono">${timeStr}</p>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Bookings
+  const tbody = document.getElementById('owner-bookings');
+  tbody.innerHTML = ownerData.bookings.map(b => `
+    <tr class="hover:bg-white/[0.02] transition-colors">
+      <td class="px-5 py-3 text-white font-medium text-sm">${b.guest}</td>
+      <td class="px-5 py-3 text-zinc-400 text-sm">${b.date} <span class="text-zinc-600">${formatTime12(b.time)}</span></td>
+      <td class="px-5 py-3 text-zinc-400 text-sm">${b.pax}</td>
+      <td class="px-5 py-3 text-amber-400 font-mono text-sm font-bold">${b.amount}</td>
+      <td class="px-5 py-3">
+        <span class="px-2 py-1 ${b.status==='Completed'?'bg-green-500/10 text-green-400 border-green-500/20':'bg-blue-500/10 text-blue-400 border-blue-500/20'} border rounded text-[10px] uppercase font-bold tracking-widest">${b.status}</span>
+      </td>
+      <td class="px-5 py-3 text-zinc-500 text-xs font-mono">${b.contact}</td>
+    </tr>
+  `).join('');
+
+  // Revenue
+  const rev = document.getElementById('owner-revenue');
+  rev.innerHTML = ownerData.revenue.map(r => `
+    <div>
+      <div class="flex justify-between items-center mb-1.5">
+        <span class="text-sm text-zinc-300 font-medium">${r.label}</span>
+        <div class="text-right">
+          <span class="text-sm text-amber-400 font-bold font-mono">₱${r.amount.toLocaleString()}</span>
+          <span class="text-zinc-600 text-xs ml-2">${r.pct}%</span>
+        </div>
+      </div>
+      <div class="w-full bg-black/60 rounded-full h-2 border border-white/5">
+        <div class="bg-gradient-to-r from-amber-600 to-amber-400 h-2 rounded-full transition-all duration-700" style="width:${r.pct}%"></div>
+      </div>
+    </div>
+  `).join('');
+
+  // Feedback
+  const fbList = document.getElementById('owner-feedback');
+  const allFb = [...db_local.feedback];
+  fbList.innerHTML = allFb.map(fb => `
+    <div class="p-5 flex gap-4 hover:bg-white/[0.02] transition-colors ${fb.read?'':'bg-amber-500/[0.02]'}">
+      <div class="w-9 h-9 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold shrink-0 text-sm">
+        ${fb.user.charAt(0)}
+      </div>
+      <div class="flex-1">
+        <div class="flex justify-between items-start">
+          <p class="text-white text-sm font-medium">${fb.user}</p>
+          <div class="flex gap-0.5">${Array(fb.rating||5).fill(0).map(()=>'<span class="text-amber-400 text-xs">★</span>').join('')}</div>
+        </div>
+        <p class="text-zinc-400 text-sm mt-1">${fb.msg}</p>
+        <p class="text-zinc-600 text-xs mt-1">${fb.time}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ---- RENDERING ----
+function renderData() {
+  renderDashboard();
+  renderSlots();
+  renderMenu();
+  renderFeedback();
+  renderStaffActivity();
+  renderTimeInRecords();
+  document.getElementById('stat-slots').innerText = db_local.slots.length;
+  document.getElementById('stat-booked').innerText = db_local.slots.filter(s=>s.booked).length;
+  document.getElementById('stat-open').innerText = db_local.slots.filter(s=>!s.booked).length;
+  // Also update total guests stat if element exists
+  const totalGuestsEl = document.getElementById('stat-guests');
+  if(totalGuestsEl) {
+    totalGuestsEl.innerText = db_local.slots.reduce((sum, s) => sum + (s.bookedPax || 0), 0);
+  }
+  document.getElementById('stat-feedback-count').innerText = db_local.feedback.filter(f=>!f.read).length;
+  setTimeout(renderCharts, 100);
+}
+
+function renderDashboard() {
+  const feed = document.getElementById('activity-feed');
+  const booked = db_local.slots.filter(s=>s.booked).slice(0,5);
+  feed.innerHTML = booked.map(s=>`
+    <div class="flex items-start gap-4 pb-4 border-b border-white/5">
+      <div class="w-8 h-8 rounded bg-green-500/10 text-green-500 flex items-center justify-center shrink-0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <div class="flex-1">
+        <p class="text-sm text-zinc-300"><span class="text-white font-medium">${s.guest || s.bookedBy || 'Guest'}</span> booked the <span class="text-amber-500">${formatTime12(s.time)}</span> slot on ${s.date}.</p>
+        <div class="flex items-center gap-3 mt-1">
+          <p class="text-[10px] text-zinc-500 uppercase tracking-wider">${s.id}</p>
+          ${s.bookedPax ? `<span class="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded border border-blue-500/20">${s.bookedPax} guest${s.bookedPax > 1 ? 's' : ''}</span>` : ''}
+          ${s.contact ? `<span class="text-[10px] text-zinc-600 font-mono">${s.contact}</span>` : ''}
+        </div>
+      </div>
+    </div>
+  `).join('') || `<p class="text-zinc-500 italic text-sm">No booked slots yet.</p>`;
+}
+
+function renderSlots(filterDate=null) {
+  const tbody = document.getElementById('slot-table-body');
+  let items = db_local.slots;
+  if(filterDate) items = items.filter(s=>s.date===filterDate);
+  tbody.innerHTML = items.map(s=>{
+    const isBooked = s.booked === true;
+    const bookedPax = s.bookedPax || (isBooked ? s.pax : 0);
+    const guestName = s.guest || s.bookedBy || '';
+    const guestContact = s.contact || '';
+
+    return `
+    <tr class="hover:bg-white/[0.02] transition-colors ${isBooked ? 'bg-blue-500/[0.02]' : ''}">
+      <td class="px-6 py-4 text-zinc-500 font-mono text-xs uppercase">${s.id}</td>
+      <td class="px-6 py-4 text-white font-medium">${s.date} <span class="text-zinc-500 ml-1 font-normal">${formatTime12(s.time)}</span></td>
+      <td class="px-6 py-4 text-center text-zinc-400">${s.pax}</td>
+      <td class="px-6 py-4 text-center">
+        ${isBooked ? `<span class="text-blue-400 font-bold">${bookedPax}</span><span class="text-zinc-600 text-xs"> / ${s.pax}</span>` : '<span class="text-zinc-600">—</span>'}
+      </td>
+      <td class="px-6 py-4">
+        <span class="px-2 py-1 ${isBooked ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'} border rounded text-[10px] uppercase font-bold tracking-widest">
+          ${isBooked ? '🔒 Booked' : 'Open'}
+        </span>
+      </td>
+      <td class="px-6 py-4">
+        ${isBooked && guestName ? `
+          <div class="flex flex-col gap-0.5">
+            <span class="text-white text-sm font-medium">${guestName}</span>
+            ${guestContact ? `<span class="text-zinc-500 text-xs font-mono">${guestContact}</span>` : ''}
+            ${s.bookedAt ? `<span class="text-zinc-600 text-[10px]">Booked ${new Date(s.bookedAt.seconds ? s.bookedAt.seconds * 1000 : s.bookedAt).toLocaleDateString()}</span>` : ''}
+          </div>
+        ` : '<span class="text-zinc-600">—</span>'}
+      </td>
+      <td class="px-6 py-4 text-right flex justify-end gap-2">
+        <button onclick="toggleSlotStatus('${s.firestoreId || s.id}')" title="${isBooked ? 'Unbook (Release Slot)' : 'Mark as Booked'}" class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-zinc-500 hover:border-amber-500/50 hover:text-amber-500 transition-all">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 11V7a5 5 0 0 1 10 0v4"/><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/></svg>
+        </button>
+        <button onclick="deleteSlot('${s.firestoreId || s.id}')" class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-zinc-500 hover:border-red-500/50 hover:text-red-500 transition-all">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+        </button>
+      </td>
+    </tr>
+  `}).join('');
+}
+
+// ---- MENU STATUS HELPERS ----
+function getStatusBadge(status) {
+  if(status==='new') return `<span class="badge-new px-2 py-1 rounded text-[10px] uppercase font-bold tracking-widest">★ New</span>`;
+  if(status==='unavailable') return `<span class="badge-unavailable px-2 py-1 rounded text-[10px] uppercase font-bold tracking-widest">Unavailable</span>`;
+  return `<span class="badge-available px-2 py-1 rounded text-[10px] uppercase font-bold tracking-widest">Available</span>`;
+}
+
+function cycleMenuStatus(id) {
+  const item = db_local.menu.find(i=>i.firestoreId===id);
+  if(!item) return;
+  const cycle = ['available','unavailable','new'];
+  const idx = cycle.indexOf(item.status);
+  const newStatus = cycle[(idx+1)%cycle.length];
+  setMenuStatus(id, newStatus);
+}
+
+async function setMenuStatus(id, status) {
+  const item = db_local.menu.find(i=>i.firestoreId===id);
+  if(item) {
+    if(item.firestoreId && window._fb) {
+      const { db, doc, updateDoc } = window._fb;
+      item.status = status;
+      item.active = status !== 'unavailable';
+      renderMenu();
+      await updateDoc(doc(db, 'menu_items', item.firestoreId), {
+        active: status !== 'unavailable',
+        status: status
+      });
+    } else {
+      item.status = status;
+      renderMenu();
+    }
+    showToast(`${item.name} set to ${status}`, status==='available'?'success':status==='unavailable'?'error':'info');
+  }
+}
+
+function renderMenu() {
+  const grid = document.getElementById('menu-grid');
+  const items = currentMenuFilter==='All' ? db_local.menu : db_local.menu.filter(i=>(i.category||'').toLowerCase()===(currentMenuFilter||'').toLowerCase());
+  grid.innerHTML = items.map(item=>`
+    <div class="bg-black border ${item.status==='new'?'border-amber-400/20':'border-white/10'} rounded-xl p-5 transition-all hover:border-white/20 relative">
+      ${item.status==='new' ? '<div class="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-amber-400/60 via-amber-300/40 to-transparent rounded-t-xl"></div>' : ''}
+      <div class="flex justify-between items-start mb-2">
+        <h4 class="text-white font-bold pr-2">${item.name}</h4>
+        <span class="text-[9px] uppercase tracking-widest text-zinc-600 bg-white/5 px-2 py-0.5 rounded border border-white/5 shrink-0">${item.category}</span>
+      </div>
+      <p class="text-zinc-500 text-xs mb-3 line-clamp-1">${item.desc || item.description || ''}</p>
+      <div class="mb-4">
+        <div class="toggle-wrap">
+          <button onclick="setMenuStatus('${item.firestoreId}','available')" class="toggle-btn ${item.status==='available'?'active-available':''}">✓ Available</button>
+          <button onclick="setMenuStatus('${item.firestoreId}','unavailable')" class="toggle-btn ${item.status==='unavailable'?'active-unavailable':''}">✗ Unavail.</button>
+          <button onclick="setMenuStatus('${item.firestoreId}','new')" class="toggle-btn ${item.status==='new'?'active-new':''}">★ New</button>
+        </div>
+      </div>
+      <div class="flex justify-between items-center border-t border-white/5 pt-4">
+        <div class="flex items-center gap-2">
+          <span class="text-amber-500 font-mono font-bold">₱${item.price}</span>
+          ${getStatusBadge(item.status)}
+        </div>
+        <button onclick="deleteItem('${item.firestoreId}')" class="text-zinc-500 hover:text-red-500 transition-colors">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+  `).join('') || `<div class="col-span-full py-12 text-center text-zinc-600 italic">No items found in this category.</div>`;
+}
+
+function renderStaffActivity() {
+  const list = document.getElementById('activity-logs-list');
+  if(!list) return;
+  const fmt = iso => { const d=new Date(iso); return `${d.toLocaleDateString()} at ${formatTime12(d.toTimeString().slice(0,5))}`; };
+  list.innerHTML = db_local.activity.map(log=>`
+    <div class="p-6 flex flex-col md:flex-row gap-6 hover:bg-white/[0.02] transition-colors">
+      <div class="shrink-0 w-12 h-12 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center font-bold text-lg border border-amber-500/20">${log.staff.charAt(0)}</div>
+      <div class="flex-1">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2">
+          <h4 class="text-white font-medium text-base">${log.staff}</h4>
+          <div class="flex items-center gap-2 mt-1 sm:mt-0">
+            <span class="text-[10px] bg-zinc-800 text-zinc-300 px-2 py-1 rounded font-mono uppercase tracking-widest flex items-center gap-1">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              ${fmt(log.timestamp)}
+            </span>
+            ${log.firestoreId ? `<button onclick="deleteActivity('${log.firestoreId}')" title="Delete log" class="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-zinc-600 hover:border-red-500/50 hover:text-red-500 transition-all flex-shrink-0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>` : ''}
+          </div>
+        </div>
+        ${log.location?`<div class="mb-3"><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(log.location)}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border border-blue-500/20 rounded-md text-xs font-medium transition-colors"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>View Location</a></div>`:''}
+        <p class="text-sm text-zinc-400 leading-relaxed mb-4">${log.desc}</p>
+        ${log.photo?`<img src="${log.photo}" class="w-full max-w-sm rounded-lg border border-white/10 object-cover max-h-48">`:''}
+      </div>
+    </div>
+  `).join('') || `<div class="p-8 text-center text-zinc-600 italic">No staff activity recorded yet.</div>`;
+}
+
+function renderFeedback() {
+  const list = document.getElementById('feedback-list');
+  list.innerHTML = db_local.feedback.map(fb=>`
+    <div class="p-4 ${fb.read?'':'bg-amber-500/[0.02]'}">
+      <div class="flex justify-between items-start">
+        <p class="text-white text-sm font-medium">${fb.user}</p>
+        <div class="flex gap-0.5">${Array(fb.rating||5).fill(0).map(()=>'<span class="text-amber-400 text-xs">★</span>').join('')}</div>
+      </div>
+      <p class="text-zinc-500 text-xs mt-1">${fb.msg}</p>
+      <p class="text-zinc-700 text-xs mt-1">${fb.time}</p>
+    </div>
+  `).join('');
+}
+
+// ---- TIME IN FEATURE ----
+let liveClockInterval = null;
+
+function startLiveClock() {
+  const clockEl = document.getElementById('live-clock');
+  const dateEl = document.getElementById('live-date');
+  if(liveClockInterval) clearInterval(liveClockInterval);
+  const tick = () => {
+    const now = new Date();
+    clockEl.textContent = formatTime12(now.toTimeString().slice(0,5));
+    dateEl.textContent = now.toLocaleDateString('en-PH', {weekday:'short', month:'short', day:'numeric', year:'numeric'});
+  };
+  tick();
+  liveClockInterval = setInterval(tick, 1000);
+}
+
+function renderTimeInRecords() {
+  const list = document.getElementById('timein-records');
+  if(!list) return;
+  if(db_local.timeins.length===0) {
+    list.innerHTML = `<div class="p-6 text-center text-zinc-600 italic text-sm">No clock-in records for today yet.</div>`;
+    return;
+  }
+  list.innerHTML = db_local.timeins.map(entry=>`
+    <div class="p-4 flex items-start gap-3 hover:bg-white/[0.02] transition-colors">
+      <div class="mt-0.5">
+        <div class="w-8 h-8 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center font-bold text-sm border border-amber-500/20">${entry.staff.charAt(0)}</div>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex justify-between items-start gap-2">
+          <p class="text-white text-sm font-medium">${entry.staff}</p>
+          <span class="text-[9px] bg-red-500/10 text-red-400 px-2 py-0.5 rounded border border-red-500/20 font-bold uppercase shrink-0 flex items-center gap-1">
+            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Locked
+          </span>
+        </div>
+        <p class="text-amber-400 font-mono text-xs mt-0.5 font-bold">${entry.timeStr}</p>
+        <p class="text-zinc-500 text-xs mt-0.5">${entry.dateStr}</p>
+        <div class="mt-1.5">
+          <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(entry.location)}" target="_blank" class="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 text-xs transition-colors">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            ${entry.location}
+          </a>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ---- STORE LOCATION CONFIG ----
+// Set your store's exact GPS coordinates and allowed radius here
+const STORE_LAT = 13.62180;   // Chef Buster Cuisine latitude
+const STORE_LNG = 123.18380;  // Chef Buster Cuisine longitude
+const STORE_RADIUS_METERS = 100; // Must be within 100m of store
+
+function getDistanceMeters(lat1, lng1, lat2, lng2) {
+  const R = 6371000; // Earth radius in meters
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLng/2) * Math.sin(dLng/2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function doTimeIn() {
+  const staff = document.getElementById('timein-staff').value;
+  const btn = document.getElementById('timein-btn');
+  const gpsStatus = document.getElementById('gps-status');
+
+  btn.disabled = true;
+  btn.innerHTML = `<svg class="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Checking Location...`;
+  btn.classList.add('opacity-70');
+
+  const now = new Date();
+  const timeStr = formatTime12(now.toTimeString().slice(0,5));
+  const dateStr = now.toLocaleDateString('en-PH', {weekday:'long', month:'long', day:'numeric', year:'numeric'});
+
+  const resetBtn = () => {
+    btn.disabled = false;
+    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Clock In Now`;
+    btn.classList.remove('opacity-70');
+  };
+
+  const saveTimein = async (locationStr, lat, lng) => {
+    gpsStatus.textContent = locationStr;
+    gpsStatus.classList.remove('text-zinc-500', 'text-red-400');
+    gpsStatus.classList.add('text-red-300');
+
+    const timeinData = {
+      staff, timeStr, dateStr,
+      location: locationStr,
+      lat: lat || null, lng: lng || null,
+      timestamp: now.toISOString(),
+      locked: true
+    };
+
+    try {
+      if(window._fb) {
+        const { db, collection, addDoc, serverTimestamp } = window._fb;
+        await addDoc(collection(db, 'timeins'), { ...timeinData, createdAt: serverTimestamp() });
+      } else {
+        db_local.timeins.unshift({ id: Date.now(), ...timeinData });
+        renderTimeInRecords();
+      }
+      resetBtn();
+      renderTimeInRecords();
+      showToast(`${staff} clocked in at ${timeStr}`, 'success');
+    } catch(err) {
+      console.error('saveTimein error:', err);
+      resetBtn();
+      showToast('Failed to save time-in: ' + (err.message || err), 'error');
+    }
+  };
+
+  const onDenied = () => {
+    gpsStatus.textContent = 'Location access denied — cannot clock in.';
+    gpsStatus.classList.remove('text-zinc-500', 'text-red-300');
+    gpsStatus.classList.add('text-red-400');
+    resetBtn();
+    showToast('Location permission denied. Enable GPS to clock in.', 'error');
+  };
+
+  if(!navigator.geolocation) {
+    showToast('Geolocation not supported on this device.', 'error');
+    resetBtn();
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const { latitude, longitude, accuracy } = pos.coords;
+      const distance = getDistanceMeters(latitude, longitude, STORE_LAT, STORE_LNG);
+      const locationStr = `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+
+      gpsStatus.textContent = `📍 ${locationStr} (±${Math.round(accuracy)}m) — ${Math.round(distance)}m from store`;
+
+      if(distance <= STORE_RADIUS_METERS) {
+        saveTimein(locationStr, latitude, longitude);
+      } else {
+        // Too far from store
+        gpsStatus.classList.remove('text-zinc-500', 'text-red-300');
+        gpsStatus.classList.add('text-red-400');
+        resetBtn();
+        showToast(
+          `Too far from store (${Math.round(distance)}m away). Must be within ${STORE_RADIUS_METERS}m.`,
+          'error'
+        );
+
+        // Show a more detailed error UI
+        const display = document.getElementById('timein-location-display');
+        display.classList.add('border-red-500/60');
+        setTimeout(() => display.classList.remove('border-red-500/60'), 3000);
+      }
+    },
+    (err) => {
+      if(err.code === err.PERMISSION_DENIED) onDenied();
+      else {
+        gpsStatus.textContent = 'GPS error — try again.';
+        resetBtn();
+        showToast('Could not get GPS location. Try again.', 'error');
+      }
+    },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+  );
+}
+
+// Live clock is handled inside switchTab directly
+
+// ---- HANDLERS ----
+function filterMenu(cat) {
+  currentMenuFilter = cat;
+  document.querySelectorAll('.menu-filter').forEach(btn=>{
+    const bt = btn.textContent.trim().toLowerCase();
+    const tc = cat==='All'?'all items':cat.toLowerCase();
+    if(bt===tc) { btn.classList.add('active','bg-white/5','text-white'); btn.classList.remove('text-zinc-500'); }
+    else { btn.classList.remove('active','bg-white/5','text-white'); btn.classList.add('text-zinc-500'); }
+  });
+  renderMenu();
+}
+
+function quickTime(time) {
+  document.getElementById('new-slot-time').value = time;
+  document.querySelectorAll('.time-chip').forEach(c=>{
+    c.classList.remove('active');
+    if(c.innerText.includes(formatTime12(time))) c.classList.add('active');
+  });
+}
+
+function adjustPax(val) {
+  const input = document.getElementById('new-slot-pax');
+  input.value = Math.max(1, Math.min(50, (parseInt(input.value)||4)+val));
+}
+
+function toggleSlotStatus(id) {
+  const slot = db_local.slots.find(s=>s.id===id || s.firestoreId===id);
+  if(!slot) return;
+
+  if(slot.firestoreId && window._fb) {
+    const { db, doc, updateDoc } = window._fb;
+    const newBooked = !slot.booked;
+
+    if (newBooked) {
+      // Booking manually
+      updateDoc(doc(db, 'slots', slot.firestoreId), {
+        booked: true,
+        guest: "Manual Entry (Admin)",
+        bookedBy: "Manual Entry (Admin)",
+        contact: null,
+        bookedPax: slot.pax,
+        bookedAt: new Date().toISOString()
+      }).then(() => showToast(`Slot marked as Booked`));
+    } else {
+      // Unbooking - clear ALL guest data
+      updateDoc(doc(db, 'slots', slot.firestoreId), {
+        booked: false,
+        guest: null,
+        bookedBy: null,
+        contact: null,
+        bookedPax: null,
+        bookedAt: null
+      }).then(() => showToast(`Slot released and is now Open`));
+    }
+  } else if(slot) {
+    slot.booked = !slot.booked;
+    if (!slot.booked) {
+      slot.guest = null;
+      slot.bookedBy = null;
+      slot.contact = null;
+      slot.bookedPax = null;
+      slot.bookedAt = null;
+    } else {
+      slot.guest = "Manual Entry (Admin)";
+      slot.bookedBy = "Manual Entry (Admin)";
+      slot.bookedPax = slot.pax;
+    }
+    renderData();
+    showToast(`Slot marked as ${slot.booked?'Booked':'Open'}`);
+  }
+}
+
+
+// ---- BULK SLOT CREATION ----
+function adjustBulkPax(val) {
+  const input = document.getElementById('bulk-slot-pax');
+  input.value = Math.max(1, Math.min(15, (parseInt(input.value)||4)+val));
+  updateBulkPreview();
+}
+
+function updateBulkPreview() {
+  const startDate = document.getElementById('bulk-start-date').value;
+  const endDate = document.getElementById('bulk-end-date').value;
+  const checkedTimes = Array.from(document.querySelectorAll('#bulk-slot-modal input[name="times"]:checked')).map(cb => cb.value);
+  const pax = document.getElementById('bulk-slot-pax').value;
+
+  if (!startDate || !endDate || checkedTimes.length === 0) {
+    document.getElementById('bulk-preview').textContent = 'Select dates and times to see preview';
+    return;
+  }
+
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const days = Math.max(1, Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1);
+  const totalSlots = days * checkedTimes.length;
+
+  document.getElementById('bulk-preview').textContent = `${days} day(s) × ${checkedTimes.length} time(s) = ${totalSlots} slots @ ${pax} guests max`;
+}
+
+// Update preview when inputs change
+document.addEventListener('DOMContentLoaded', () => {
+  const bulkModal = document.getElementById('bulk-slot-modal');
+  if (bulkModal) {
+    bulkModal.querySelectorAll('input').forEach(input => {
+      input.addEventListener('change', updateBulkPreview);
+    });
+  }
+});
+
+async function handleBulkAddSlots(e) {
+  e.preventDefault();
+  const btn = document.getElementById('bulk-submit-btn');
+  if(btn) { btn.disabled = true; btn.textContent = 'Creating...'; }
+
+  const f = new FormData(e.target);
+  const startDate = new Date(f.get('startDate'));
+  const endDate = new Date(f.get('endDate'));
+  const times = Array.from(document.querySelectorAll('#bulk-slot-modal input[name="times"]:checked')).map(cb => cb.value);
+  const maxPax = Math.min(parseInt(f.get('pax')), 15);
+
+  if (times.length === 0) {
+    showToast("Please select at least one time slot.", "error");
+    if(btn) { btn.disabled = false; btn.textContent = 'Create All Slots'; }
+    return;
+  }
+
+  const slots = [];
+  const current = new Date(startDate);
+
+  while (current <= endDate) {
+    const dateStr = current.toISOString().split('T')[0];
+    for (const time of times) {
+      slots.push({
+        id: `S-${Math.floor(Math.random()*9000)+1000}`,
+        date: dateStr,
+        time: time,
+        pax: maxPax,
+        maxPax: maxPax,
+        booked: false,
+        guest: null,
+        contact: null,
+        bookedPax: null,
+        bookedBy: null,
+        bookedAt: null
+      });
+    }
+    current.setDate(current.getDate() + 1);
+  }
+
+  try {
+    if (window._fb) {
+      const { db, collection, addDoc, serverTimestamp } = window._fb;
+      // Create all slots
+      for (const slotData of slots) {
+        await addDoc(collection(db, 'slots'), { ...slotData, createdAt: serverTimestamp() });
+      }
+    } else {
+      db_local.slots.push(...slots);
+      renderData();
+    }
+    showToast(`Created ${slots.length} slots successfully!`, "success");
+    closeModal('bulk-slot-modal');
+    e.target.reset();
+    document.getElementById('bulk-preview').textContent = 'Select dates and times to see preview';
+  } catch(err) {
+    console.error('handleBulkAddSlots error:', err);
+    showToast("Failed to create slots: " + (err.message || err), "error");
+  } finally {
+    if(btn) { btn.disabled = false; btn.textContent = 'Create All Slots'; }
+  }
+}
+
+async function handleAddSlot(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('button[type="submit"]');
+  if(btn) { btn.disabled = true; btn.textContent = 'Publishing...'; }
+  const f = new FormData(e.target);
+  const maxPax = Math.min(parseInt(f.get('pax')), 15);
+  const slotData = { 
+    id: `S-${Math.floor(Math.random()*9000)+1000}`, 
+    date: f.get('date'), 
+    time: f.get('time'), 
+    pax: maxPax,
+    maxPax: maxPax,
+    booked: false, 
+    guest: null, 
+    contact: null,
+    bookedPax: null,
+    bookedBy: null,
+    bookedAt: null
+  };
+  try {
+    if(window._fb) {
+      const { db, collection, addDoc, serverTimestamp } = window._fb;
+      await addDoc(collection(db, 'slots'), { ...slotData, createdAt: serverTimestamp() });
+    } else {
+      db_local.slots.unshift(slotData);
+      renderData();
+    }
+    showToast("Availability slot published! Max " + maxPax + " guests.", "success");
+    closeModal('add-slot-modal');
+    e.target.reset();
+  } catch(err) {
+    console.error('handleAddSlot error:', err);
+    showToast("Failed to publish slot: " + (err.message || err), "error");
+  } finally {
+    if(btn) { btn.disabled = false; btn.textContent = 'Publish Slot'; }
+  }
+}
+
+async function handleAddItem(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('button[type="submit"]');
+  if(btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+  const f = new FormData(e.target);
+  const name = f.get('name');
+  const status = f.get('status') || 'available';
+  const category = f.get('category');
+  try {
+    if(window._fb) {
+      const { db, collection, addDoc, serverTimestamp } = window._fb;
+      await addDoc(collection(db, 'menu_items'), {
+        name,
+        price: parseFloat(f.get('price')),
+        category: category,
+        description: f.get('desc'),
+        desc: f.get('desc'),
+        status: status,
+        active: status !== 'unavailable',
+        createdAt: serverTimestamp()
+      });
+    } else {
+      db_local.menu.unshift({ id: Date.now(), firestoreId: null, name, price: f.get('price'), category, desc: f.get('desc'), status });
+      renderData();
+    }
+    showToast(`${name} added to ${category}!`, "success");
+    closeModal('add-item-modal');
+    e.target.reset();
+  } catch(err) {
+    console.error('handleAddItem error:', err);
+    showToast("Failed to save item: " + (err.message || err), "error");
+  } finally {
+    if(btn) { btn.disabled = false; btn.textContent = 'Save Item'; }
+  }
+}
+
+function previewActivityPhoto(e) {
+  const file = e.target.files[0];
+  if(file) {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      document.getElementById('photo-preview-img').src = ev.target.result;
+      document.getElementById('photo-preview-container').classList.remove('hidden');
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function clearActivityPhoto() {
+  document.getElementById('activity-photo').value = '';
+  document.getElementById('photo-preview-img').src = '';
+  document.getElementById('photo-preview-container').classList.add('hidden');
+}
+
+function fetchGPS() {
+  const locationInput = document.getElementById('activity-location');
+  if(navigator.geolocation) {
+    locationInput.placeholder = "Fetching coordinates...";
+    navigator.geolocation.getCurrentPosition(
+      pos => { locationInput.value = `${pos.coords.latitude}, ${pos.coords.longitude}`; showToast("GPS coordinates acquired!", "success"); },
+      () => { locationInput.placeholder = "Address or Coordinates"; showToast("Unable to fetch GPS.", "error"); }
+    );
+  } else { showToast("Geolocation not supported.", "error"); }
+}
+
+async function handleAddActivity(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('button[type="submit"]');
+  if(btn) { btn.disabled = true; btn.textContent = 'Submitting...'; }
+  const f = new FormData(e.target);
+  const photoInput = document.getElementById('activity-photo');
+  const save = async (photoData) => {
+    const actData = { staff:f.get('staff'), location:f.get('location'), desc:f.get('desc'), photo:photoData, timestamp:new Date().toISOString() };
+    if(window._fb) {
+      const { db, collection, addDoc, serverTimestamp } = window._fb;
+      await addDoc(collection(db, 'activity'), { ...actData, createdAt: serverTimestamp() });
+    } else {
+      db_local.activity.unshift({ id:Date.now(), ...actData });
+      renderData();
+    }
+  };
+  try {
+    if(photoInput.files && photoInput.files[0]) {
+      await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = async ev => { try { await save(ev.target.result); resolve(); } catch(err) { reject(err); } };
+        reader.onerror = () => reject(new Error('Failed to read photo'));
+        reader.readAsDataURL(photoInput.files[0]);
+      });
+    } else {
+      await save(null);
+    }
+    showToast("Staff activity logged successfully!", "success");
+    closeModal('add-activity-modal');
+    clearActivityPhoto();
+    e.target.reset();
+  } catch(err) {
+    console.error('handleAddActivity error:', err);
+    showToast("Failed to submit log: " + (err.message || err), "error");
+  } finally {
+    if(btn) { btn.disabled = false; btn.textContent = 'Submit Log'; }
+  }
+}
+
+function applySlotFilter() { renderSlots(document.getElementById('slot-filter-date').value||null); }
+async function deleteSlot(id) {
+  const slot = db_local.slots.find(s=>s.id===id || s.firestoreId===id);
+  if(!slot) return;
+  if(slot.firestoreId && window._fb) {
+    const { db, doc, deleteDoc } = window._fb;
+    await deleteDoc(doc(db, 'slots', slot.firestoreId));
+  } else {
+    db_local.slots = db_local.slots.filter(s=>s.id!==id && s.firestoreId!==id);
+    renderData();
+  }
+  showToast("Slot removed.");
+}
+async function deleteItem(id) {
+  const item = db_local.menu.find(i=>i.id===id || i.firestoreId===id);
+  if(item && item.firestoreId && window._fb) {
+    const { db, doc, deleteDoc } = window._fb;
+    await deleteDoc(doc(db, 'menu_items', item.firestoreId));
+  } else {
+    db_local.menu = db_local.menu.filter(i=>i.id!==id);
+    renderData();
+  }
+  showToast("Menu item removed.");
+}
+
+async function seedMenuItems() {
+  const { collection, addDoc, serverTimestamp } = window._fb;
+  const defaultMenu = [
+    // CHICKEN
+    { name:'Chicken Inasal', price:280, category:'chicken', description:'Grilled chicken leg quarter marinated in calamansi, vinegar, and annatto oil. Served with rice and atchara.', status:'available', active:true },
+    { name:'Crispy Chicken Wings', price:250, category:'chicken', description:'Double-fried wings tossed in your choice of buffalo, garlic parmesan, or honey sriracha glaze.', status:'available', active:true },
+    { name:'Chicken Adobo', price:260, category:'chicken', description:'Classic Filipino braised chicken in soy sauce, vinegar, garlic, and bay leaves. Tender and savory.', status:'available', active:true },
+    { name:'Chicken Sisig', price:270, category:'chicken', description:'Sizzling chopped chicken with onions, chilis, and calamansi on a hot plate with egg.', status:'available', active:true },
+    { name:'Fried Chicken (2pc)', price:220, category:'chicken', description:'Crispy golden fried chicken with our secret spice blend. Served with gravy and rice.', status:'available', active:true },
+    // PORK
+    { name:'Crispy Pata', price:650, category:'pork', description:'Deep-fried pork knuckle with crackling skin. Served with soy-vinegar dipping sauce and atchara.', status:'available', active:true },
+    { name:'Pork BBQ Skewers (4pcs)', price:180, category:'pork', description:'Char-grilled pork marinated in sweet and tangy Filipino BBQ sauce.', status:'available', active:true },
+    { name:'Pork Sinigang', price:320, category:'pork', description:'Tamarind-based sour soup with pork belly, vegetables, and gabi. Comfort in a bowl.', status:'available', active:true },
+    { name:'Pork Adobo', price:280, category:'pork', description:'Slow-braised pork belly in soy, vinegar, garlic, and peppercorns. A Filipino classic.', status:'available', active:true },
+    { name:'Lechon Kawali', price:380, category:'pork', description:'Deep-fried pork belly with ultra-crispy skin and tender meat. Served with liver sauce.', status:'available', active:true },
+    { name:'Pork Sisig', price:290, category:'pork', description:'Sizzling chopped pork face and ears with calamansi, chilis, and egg on a hot plate.', status:'available', active:true },
+    { name:'Grilled Liempo', price:300, category:'pork', description:'Char-grilled pork belly slab marinated in calamansi, garlic, and soy. Smoky and juicy.', status:'available', active:true },
+    // LECHON
+    { name:'Lechon Belly (1kg)', price:850, category:'lechon', description:'Slow-roasted pork belly with shatteringly crispy skin and juicy meat. Good for 4-6 people.', status:'available', active:true },
+    { name:'Lechon Belly (500g)', price:480, category:'lechon', description:'Half-kilo of our signature roasted pork belly with crispy skin. Good for 2-3 people.', status:'available', active:true },
+    { name:'Lechon Paksiw', price:350, category:'lechon', description:'Leftover lechon stewed in vinegar, liver sauce, and sugar. Sweet, sour, and savory.', status:'new', active:true },
+    { name:'Lechon Kawali Special', price:420, category:'lechon', description:'Premium deep-fried pork belly with extra-crispy skin. Served with special sarsa.', status:'available', active:true },
+    { name:'Boneless Lechon Belly', price:920, category:'lechon', description:'Whole boneless pork belly rolled and roasted. Perfect for celebrations. Serves 6-8.', status:'available', active:true },
+    // BULAKLAK
+    { name:'Chicharon Bulaklak', price:280, category:'bulaklak', description:'Deep-fried pork mesentery until golden and crispy. The ultimate beer match.', status:'available', active:true },
+    { name:'Bulaklak Sisig', price:300, category:'bulaklak', description:'Sizzling chopped chicharon bulaklak with onions, chilis, and calamansi.', status:'available', active:true },
+    { name:'Spicy Bulaklak', price:290, category:'bulaklak', description:'Crispy pork mesentery tossed in spicy garlic and chili flakes.', status:'available', active:true },
+    { name:'Bulaklak with Cheese Dip', price:320, category:'bulaklak', description:'Crispy bulaklak served with our signature gooey cheese dip.', status:'new', active:true },
+    // PASTA
+    { name:'Creamy Carbonara', price:280, category:'pasta', description:'Fettuccine in rich creamy sauce with bacon, mushrooms, and parmesan.', status:'available', active:true },
+    { name:'Seafood Marinara', price:320, category:'pasta', description:'Spaghetti in tangy tomato sauce with shrimp, squid, and mussels.', status:'available', active:true },
+    { name:'Aglio e Olio', price:240, category:'pasta', description:'Spaghetti tossed in garlic-infused olive oil with chili flakes and parsley.', status:'available', active:true },
+    { name:'Baked Macaroni', price:260, category:'pasta', description:'Filipino-style macaroni with meat sauce, bechamel, and melted cheese.', status:'available', active:true },
+    { name:'Pesto Pasta', price:270, category:'pasta', description:'Fresh basil pesto with pine nuts, parmesan, and cherry tomatoes.', status:'available', active:true },
+    { name:'Tuna Pasta', price:250, category:'pasta', description:'Creamy tuna pasta with mushrooms, capers, and a hint of lemon.', status:'available', active:true },
+    // DRINKS
+    { name:'Mango Shake', price:120, category:'drinks', description:'Fresh ripe mango blended with milk and ice. Thick and refreshing.', status:'available', active:true },
+    { name:'Buko Juice', price:90, category:'drinks', description:'Fresh young coconut juice served straight from the shell.', status:'available', active:true },
+    { name:"Sago't Gulaman", price:80, category:'drinks', description:'Sweet Filipino refreshment with tapioca pearls and gelatin cubes.', status:'available', active:true },
+    { name:'Iced Tea (Bottomless)', price:100, category:'drinks', description:'House-blend lemon iced tea. Free refills.', status:'available', active:true },
+    { name:'Pineapple Juice', price:95, category:'drinks', description:'Freshly squeezed sweet pineapple juice.', status:'available', active:true },
+    { name:'Cucumber Lemonade', price:110, category:'drinks', description:'Refreshing cucumber-infused lemonade with mint.', status:'new', active:true },
+    { name:'Calamansi Juice', price:85, category:'drinks', description:'Fresh calamansi with water and a touch of honey. A Filipino staple.', status:'available', active:true },
+    { name:'Coke/Sprite/Royal', price:75, category:'drinks', description:'Chilled canned soft drinks.', status:'available', active:true },
+    { name:'San Miguel Pale Pilsen', price:95, category:'drinks', description:'Ice-cold Filipino beer. The perfect pairing for our crispy dishes.', status:'available', active:true },
+    { name:'Red Horse (500ml)', price:110, category:'drinks', description:'Strong beer for those who want an extra kick with their meal.', status:'available', active:true },
+    // SIDES
+    { name:'Garlic Rice', price:50, category:'sides', description:'Steamed rice fried with crispy garlic bits and a hint of butter.', status:'available', active:true },
+    { name:'Plain Rice', price:35, category:'sides', description:'Steamed jasmine rice. Simple and perfect.', status:'available', active:true },
+    { name:'Atchara', price:45, category:'sides', description:'Pickled green papaya with carrots and raisins. The perfect palate cleanser.', status:'available', active:true },
+    { name:'Ensaladang Talong', price:80, category:'sides', description:'Grilled eggplant salad with tomatoes, onions, and calamansi dressing.', status:'available', active:true },
+    { name:'Lumpiang Shanghai (8pcs)', price:150, category:'sides', description:'Crispy spring rolls filled with seasoned ground pork. Served with sweet chili sauce.', status:'available', active:true },
+    { name:'French Fries', price:90, category:'sides', description:'Crispy golden fries with sea salt. Perfect for sharing.', status:'available', active:true },
+    { name:'Mashed Potatoes', price:100, category:'sides', description:'Creamy mashed potatoes with butter and a hint of garlic.', status:'available', active:true },
+    { name:'Buttered Vegetables', price:85, category:'sides', description:'Mixed seasonal vegetables sauteed in butter.', status:'available', active:true }
+  ];
+  for(const item of defaultMenu) {
+    await addDoc(collection(db, 'menu_items'), { ...item, desc: item.description, createdAt: serverTimestamp() });
+  }
+  showToast('Menu seeded with ' + defaultMenu.length + ' Chef Buster items!', 'success');
+}
+
+// ── LOGOUT ────────────────────────────────────────────────────────────────────
+async function adminLogout() {
+  if (window._fb && window._fb.auth) {
+    try { await window._fb.signOut(window._fb.auth); } catch(e) {}
+  }
+  localStorage.clear();
+  sessionStorage.clear();
+  window.location.href = 'index.html';
+}
+window.adminLogout = adminLogout;
+
+// ── DELETE ACTIVITY LOG ───────────────────────────────────────────────────────
+async function deleteActivity(id) {
+  if (!confirm('Delete this activity log? This cannot be undone.')) return;
+  const entry = db_local.activity.find(a => a.firestoreId === id);
+  if (entry && window._fb) {
+    const { db, doc, deleteDoc } = window._fb;
+    await deleteDoc(doc(db, 'activity', entry.firestoreId));
+    showToast('Activity log deleted.', 'success');
+  }
+}
+window.deleteActivity = deleteActivity;
+
+// ── CHARTS (Chart.js) ────────────────────────────────────────────────────────
+let chartRes = null, chartMenu = null;
+
+function renderCharts() {
+  if (typeof Chart === 'undefined') return;
+
+  // -- Bar chart: bookings per day last 7 days --
+  const labels = [];
+  const counts = {};
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0,10);
+    labels.push(d.toLocaleDateString('en-PH', { weekday: 'short', month: 'short', day: 'numeric' }));
+    counts[key] = 0;
+  }
+  db_local.bookings.forEach(b => {
+    const key = b.date || (b.createdAt ? new Date(b.createdAt.seconds * 1000).toISOString().slice(0,10) : null);
+    if (key && counts[key] !== undefined) counts[key]++;
+  });
+  const barData = Object.values(counts);
+
+  const ctxR = document.getElementById('chart-reservations');
+  if (ctxR) {
+    if (chartRes) chartRes.destroy();
+    chartRes = new Chart(ctxR, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{ label: 'Bookings', data: barData, backgroundColor: 'rgba(234,88,12,0.75)', borderRadius: 6, borderSkipped: false }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#71717a', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+          y: { ticks: { color: '#71717a', font: { size: 10 }, stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true }
+        }
+      }
+    });
+  }
+
+  // -- Pie chart: menu items by category --
+  const cats = {};
+  db_local.menu.forEach(m => { cats[m.category] = (cats[m.category] || 0) + 1; });
+  const catLabels = Object.keys(cats);
+  const catData = Object.values(cats);
+  const palette = ['#ea580c','#f59e0b','#3b82f6','#10b981','#8b5cf6','#ec4899'];
+
+  const ctxM = document.getElementById('chart-menu');
+  if (ctxM) {
+    if (chartMenu) chartMenu.destroy();
+    chartMenu = new Chart(ctxM, {
+      type: 'doughnut',
+      data: {
+        labels: catLabels,
+        datasets: [{ data: catData, backgroundColor: palette.slice(0, catLabels.length), borderWidth: 0 }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'right', labels: { color: '#a1a1aa', font: { size: 11 }, padding: 16, boxWidth: 12 } }
+        }
+      }
+    });
+  }
+}
+
+// ── REPORTS ──────────────────────────────────────────────────────────────────
+
+const STAFF_COLORS = {
+  'Chef Buster':    '#b45309',
+  'Manager Maria':  '#0f6e56',
+  'Sous Chef John': '#185fa5',
+  'Server Alex':    '#7c3aed'
+};
+function staffColor(name) { return STAFF_COLORS[name] || '#888'; }
+
+function renderReport() {
+  const picker = document.getElementById('report-month-picker');
+  if(!picker || !picker.value) return;
+  const [yr, mo] = picker.value.split('-').map(Number);
+  const monthName = new Date(yr, mo-1, 1).toLocaleString('en-PH', { month:'long', year:'numeric' });
+  const generatedDate = new Date().toLocaleDateString('en-PH', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const printedDate = new Date().toLocaleDateString('en-PH', { month:'short', day:'numeric', year:'numeric' });
+
+  // Helper: check if a date string (YYYY-MM-DD) or ISO timestamp is in selected month
+  const inMonth = (dateStr) => {
+    if(!dateStr) return false;
+    const d = new Date(dateStr);
+    return d.getFullYear()===yr && (d.getMonth()+1)===mo;
+  };
+
+  // ── SECTION 1: Reservations ─────────────────────────────────────────────
+  // Merge ownerData.bookings + db_local.bookings, deduplicate by guest+date+time
+  const allBookings = [
+    ...ownerData.bookings,
+    ...db_local.bookings.map(b=>({
+      guest: b.guest||b.name||'Guest',
+      date: b.date||(b.createdAt?new Date(b.createdAt.seconds*1000).toISOString().slice(0,10):''),
+      time: b.time||'—',
+      pax: b.bookedPax||b.pax||0,
+      amount: b.amount||'—',
+      status: b.status||'Upcoming',
+      contact: b.contact||'—'
+    }))
+  ];
+  const monthBookings = allBookings
+    .filter(b=>inMonth(b.date))
+    .sort((a,b)=>a.date.localeCompare(b.date));
+
+  const totalBookings = monthBookings.length;
+  const completed = monthBookings.filter(b=>b.status==='Completed').length;
+  const upcoming  = monthBookings.filter(b=>b.status==='Upcoming').length;
+  const totalGuests = monthBookings.reduce((s,b)=>s+(parseInt(b.pax)||0),0);
+
+  const fmtDate = d => { const [y,m,dd]=d.split('-'); return `${m}/${dd}/${y}`; };
+  const fmtAmt = a => { if(typeof a==='number') return `₱${a.toLocaleString()}`; return a||'—'; };
+
+  const bookingRows = monthBookings.map(b=>`
+    <tr>
+      <td>${b.guest}</td>
+      <td>${fmtDate(b.date)}</td>
+      <td>${formatTime12(b.time)}</td>
+      <td style="text-align:center">${b.pax}</td>
+      <td style="font-family:monospace">${fmtAmt(b.amount)}</td>
+      <td style="font-family:monospace;font-size:11px">${b.contact}</td>
+      <td><span class="${b.status==='Completed'?'rpt-badge-completed':'rpt-badge-upcoming'}">${b.status}</span></td>
+    </tr>`).join('') || `<tr><td colspan="7" style="text-align:center;color:#aaa;padding:20px">No bookings for this month.</td></tr>`;
+
+  // ── SECTION 2: Revenue ──────────────────────────────────────────────────
+  // Sum booking amounts for the month
+  const monthRevNum = monthBookings.reduce((s,b)=>{
+    const raw = typeof b.amount==='number' ? b.amount : parseFloat((b.amount||'').replace(/[^0-9.]/g,''))||0;
+    return s+raw;
+  }, 0);
+
+  // Use ownerData.revenue for category breakdown (scaled to month total if available)
+  const totalRevBase = ownerData.revenue.reduce((s,r)=>s+r.amount, 0);
+  const revenueRows = ownerData.revenue.map(r => {
+    const scaledAmt = totalRevBase > 0 ? Math.round((r.amount/totalRevBase) * (monthRevNum||totalRevBase)) : r.amount;
+    const pct = r.pct;
+    return `
+    <div style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+        <span style="font-weight:700;font-size:13px">${r.label}</span>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-family:monospace;font-size:13px;font-weight:700">₱${scaledAmt.toLocaleString()}</span>
+          <span style="color:#888;font-size:11px;min-width:32px;text-align:right">${pct}%</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="rpt-rev-bar-track" style="flex:1">
+          <div class="rpt-rev-bar-fill" style="width:${pct}%"></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const displayTotal = monthRevNum || ownerData.revenue.reduce((s,r)=>s+r.amount,0);
+
+  // ── SECTION 3: Staff Attendance Calendar ───────────────────────────────
+  const daysInMonth = new Date(yr, mo, 0).getDate();
+  const firstDay   = new Date(yr, mo-1, 1).getDay(); // 0=Sun
+
+  // Merge timeins from ownerData.fullStaffLogs + db_local.timeins
+  const allTimeins = [
+    ...ownerData.fullStaffLogs.map(l=>({ staff:l.staff, timestamp:l.timestamp })),
+    ...db_local.timeins.map(l=>({ staff:l.staff, timestamp:l.timestamp }))
+  ].filter(l=>inMonth(l.timestamp));
+
+  // Build map: day -> Set of staff names
+  const dayStaffMap = {};
+  allTimeins.forEach(l=>{
+    const d = new Date(l.timestamp).getDate();
+    if(!dayStaffMap[d]) dayStaffMap[d] = new Set();
+    dayStaffMap[d].add(l.staff);
+  });
+
+  // Staff day-count for legend
+  const staffDays = {};
+  allTimeins.forEach(l=>{
+    const d = new Date(l.timestamp).getDate();
+    const key = `${l.staff}__${d}`;
+    if(!staffDays[l.staff]) staffDays[l.staff] = new Set();
+    staffDays[l.staff].add(d);
+  });
+
+  const todayDay = new Date().getDate();
+  const todayMo  = new Date().getMonth()+1;
+  const todayYr  = new Date().getFullYear();
+
+  // Build calendar cells
+  let cells = '';
+  let cellCount = 0;
+
+  // Leading empty cells
+  for(let i=0;i<firstDay;i++) { cells+=`<td class="rpt-cal other-month"></td>`; cellCount++; }
+
+  for(let d=1;d<=daysInMonth;d++) {
+    if(cellCount%7===0 && cellCount>0) cells+='</tr><tr>';
+    const isToday = (d===todayDay && mo===todayMo && yr===todayYr);
+    const staffSet = dayStaffMap[d] || new Set();
+    const avatars = [...staffSet].map(name=>{
+      const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const col = staffColor(name);
+      return `<span class="rpt-avatar" style="background:${col}" title="${name}">${initials}</span>`;
+    }).join('');
+    cells += `<td class="rpt-cal${isToday?' today-cell':''}"><div class="day-num">${d}</div>${avatars}</td>`;
+    cellCount++;
+  }
+  // Trailing cells
+  const remaining = 7-(cellCount%7);
+  if(remaining<7) for(let i=0;i<remaining;i++) { cells+=`<td class="rpt-cal other-month"></td>`; }
+
+  // Legend
+  const allStaffNames = [...new Set(allTimeins.map(l=>l.staff))];
+  const legend = allStaffNames.length===0
+    ? `<p style="color:#aaa;font-size:12px;margin-top:8px">No time-in records for this month.</p>`
+    : allStaffNames.map(name=>{
+        const col = staffColor(name);
+        const days = staffDays[name] ? staffDays[name].size : 0;
+        const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+        return `<div class="rpt-legend-item">
+          <span class="rpt-avatar" style="background:${col};width:26px;height:26px;font-size:10px">${initials}</span>
+          <span>${name}</span>
+          <span style="color:#888;font-size:11px">${days} day${days!==1?'s':''} clocked in</span>
+        </div>`;
+      }).join('');
+
+  // ── BUILD HTML ──────────────────────────────────────────────────────────
+  const html = `
+    <div class="rpt-header">
+      <div>
+        <div class="logo">🍴 CHEF BUSTER</div>
+        <div style="font-size:11px;color:#888;margin-top:2px">Cuisine &amp; Restaurant</div>
+      </div>
+      <div class="meta">
+        <strong style="color:#fff;font-size:13px">Owner Report — ${monthName}</strong><br>
+        Generated: ${generatedDate}<br>
+        Confidential Owner Document
+      </div>
+    </div>
+
+    <!-- Section 1 -->
+    <div class="rpt-section">
+      <div class="rpt-section-title">Section 1 — Reservation Summary</div>
+      <div class="rpt-stats">
+        <div class="rpt-stat-box"><div class="val">${totalBookings}</div><div class="lbl">Total Bookings</div></div>
+        <div class="rpt-stat-box"><div class="val" style="color:#059669">${completed}</div><div class="lbl">Completed</div></div>
+        <div class="rpt-stat-box"><div class="val" style="color:#b45309">${upcoming}</div><div class="lbl">Upcoming</div></div>
+        <div class="rpt-stat-box"><div class="val">${totalGuests}</div><div class="lbl">Total Guests</div></div>
+      </div>
+      <table class="rpt-table">
+        <thead><tr>
+          <th>Guest</th><th>Date</th><th>Time</th><th style="text-align:center">Pax</th><th>Amount</th><th>Contact</th><th>Status</th>
+        </tr></thead>
+        <tbody>${bookingRows}</tbody>
+      </table>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="rpt-section">
+      <div class="rpt-section-title">Section 2 — Revenue Breakdown</div>
+      ${revenueRows}
+      <div style="display:flex;justify-content:space-between;align-items:center;border-top:2px solid #222;padding-top:12px;margin-top:4px">
+        <span style="font-weight:700;font-size:14px">Total Revenue</span>
+        <span style="font-family:monospace;font-size:16px;font-weight:700;color:#b45309">₱${displayTotal.toLocaleString()}</span>
+      </div>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="rpt-section">
+      <div class="rpt-section-title">Section 3 — Staff Attendance Calendar</div>
+      <table class="rpt-cal">
+        <thead><tr>
+          <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
+        </tr></thead>
+        <tbody><tr>${cells}</tr></tbody>
+      </table>
+      <div class="rpt-legend">${legend}</div>
+    </div>
+
+    <div class="rpt-footer">
+      <span>Chef Buster Cuisine — Confidential Owner Report</span>
+      <span>Page 1 of 1 · Printed ${printedDate}</span>
+    </div>
+  `;
+
+  document.getElementById('report-print-area').innerHTML = html;
+}
+
+window.renderReport = renderReport;
+
+// ── SETTINGS & NOTIFICATIONS ──────────────────────────────────────────────
+window.saveSettings = function() {
+  const settings = {
+    restaurantName: document.querySelector('[value="Chef Buster Cuisine"]')?.value || 'Chef Buster Cuisine',
+    contactNumber: document.querySelector('[value="+63 123 456 7890"]')?.value || '+63 123 456 7890',
+    email: document.querySelector('[value="chefbustercuisine@gmail.com"]')?.value || 'chefbustercuisine@gmail.com',
+    location: document.querySelector('textarea')?.value || 'Chef Buster Cuisine, Naga City',
+    emailNotifications: true,
+    smsAlerts: false,
+    pushNotifications: true
+  };
+  localStorage.setItem('appSettings', JSON.stringify(settings));
+  showToast('Settings saved successfully!');
+};
+
+window.exportDatabase = function() {
+  const data = {
+    slots: db_local.slots || [],
+    menu: db_local.menu || [],
+    feedback: db_local.feedback || [],
+    bookings: db_local.bookings || [],
+    activity: db_local.activity || [],
+    exportDate: new Date().toISOString(),
+    restaurant: 'Chef Buster Cuisine'
+  };
+  const jsonString = JSON.stringify(data, null, 2);
+  const blob = new Blob([jsonString], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `chef-buster-backup-${new Date().toISOString().split('T')[0]}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+  showToast('Database exported successfully!');
+};
+
+window.showNotification = function(title, message, type = 'info') {
+  const container = document.getElementById('toast-container') || document.body;
+  const notification = document.createElement('div');
+  const colors = { info: 'bg-blue-500/20 border-blue-500/30 text-blue-400', success: 'bg-green-500/20 border-green-500/30 text-green-400', error: 'bg-red-500/20 border-red-500/30 text-red-400' };
+  notification.className = `${colors[type] || colors.info} border rounded-lg p-4 toast animate-slideIn`;
+  notification.innerHTML = `<p class="font-bold text-sm">${title}</p><p class="text-xs mt-1">${message}</p>`;
+  container.appendChild(notification);
+  setTimeout(() => { notification.remove(); }, 4000);
+};
+
+// Use addEventListener so we don't overwrite the module script's load handler
+window.addEventListener('load', () => { renderData(); startLiveClock(); });
+
+// Expose all interactive functions on window for onclick= handlers
+window.switchTab = switchTab;
+window.toggleSidebar = toggleSidebar;
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.openPwModal = openPwModal;
+window.closePwModal = closePwModal;
+window.checkPassword = checkPassword;
+window.togglePwVisibility = togglePwVisibility;
+window.openOwnerPanel = openOwnerPanel;
+window.closeOwnerPanel = closeOwnerPanel;
+window.filterMenu = filterMenu;
+window.quickTime = quickTime;
+window.adjustPax = adjustPax;
+window.handleAddSlot = handleAddSlot;
+window.handleAddItem = handleAddItem;
+window.handleAddActivity = handleAddActivity;
+window.applySlotFilter = applySlotFilter;
+window.deleteSlot = deleteSlot;
+window.deleteItem = deleteItem;
+window.deleteActivity = deleteActivity;
+window.toggleSlotStatus = toggleSlotStatus;
+window.setMenuStatus = setMenuStatus;
+window.cycleMenuStatus = cycleMenuStatus;
+window.doTimeIn = doTimeIn;
+window.fetchGPS = fetchGPS;
+window.previewActivityPhoto = previewActivityPhoto;
+window.clearActivityPhoto = clearActivityPhoto;
+window.renderReport = renderReport;
+window.showToast = showToast;
+window.adjustBulkPax = adjustBulkPax;
+window.updateBulkPreview = updateBulkPreview;
+window.handleBulkAddSlots = handleBulkAddSlots;
+window.saveSettings = saveSettings;
+window.exportDatabase = exportDatabase;
+window.showNotification = showNotification;
+</script>
+</body>
+</html>
